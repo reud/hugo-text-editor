@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.my-basic-content {
+    display: flex;
+    justify-content: center;
+}
+
+.my-card {
+    width: 20rem;
+}
+
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+}

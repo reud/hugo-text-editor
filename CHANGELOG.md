@@ -236,7 +236,7 @@ https://github.com/codesbiome/electron-react-webpack-typescript-2022
 
 - Added electron window background color
 - Devtools opening on startup is disabled
-- Added `preload` script usage (preload.ts) 👍
+- Added `preload` script usage (preload.tsx) 👍
 - Moved webpack `aliases` to separate file
 - Added new style & color changes to boilerplate layout
 - Added prettier configuration files `.prettierrc` `.prettierignore`

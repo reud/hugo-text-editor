@@ -1,17 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { inDev } from '@common/helpers';
-import WindowFrame from '@misc/window/components/WindowFrame';
-import Application from './components/Application';
+import { HashRouter, Route, Routes } from "react-router-dom";
+import Home from '@renderer/pages/home/Home';
+import 'bootstrap/dist/css/bootstrap.css';
+import '../generated/tailwind.css';
 
 // Say something
 console.log('[ERWT] : Renderer execution started');
 
 // Application to Render
 const app = (
-  <WindowFrame title='ERWT Boilerplate' platform='windows'>
-    <Application />
-  </WindowFrame>
+  <HashRouter>
+    <Routes>
+      <Route path="/" element={<Home/>}/>
+      <Route path="/home" element={<Home/>} />
+      <Route path="/edit" element={<Home/>} />
+    </Routes>
+  </HashRouter>
 );
 
 // Render application in DOM

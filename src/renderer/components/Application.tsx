@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { hot } from 'react-hot-loader';
 import logo from '@assets/images/logo.png';
-import './Application.less';
+
+import { Link } from 'react-router-dom';
 
 const Application: React.FC = () => {
   const [counter, setCounter] = useState(0);
@@ -50,6 +51,11 @@ const Application: React.FC = () => {
           &nbsp;&nbsp; &nbsp;&nbsp;
           <button onClick={() => setCounter(counter > 0 ? counter - 1 : 0)}>
             Decrement Counter <span>{counter}</span>
+          </button>
+          <button>
+            <Link to="/home">
+              Warp /Home <span>{counter}</span>
+            </Link>
           </button>
         </div>
       </div>

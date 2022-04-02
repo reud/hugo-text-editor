@@ -8,9 +8,9 @@ module.exports = {
     // Create asar archive for main, renderer process files
     asar: true,
     // Set executable name
-    executableName: 'ERWT Boilerplate',
+    executableName: 'hugo-text-writer',
     // Set application copyright
-    appCopyright: 'Copyright (C) 2021 Codesbiome, Guasam',
+    appCopyright: 'Copyright (C) 2022 reud',
   },
   // Forge Makers
   makers: [
@@ -74,7 +74,7 @@ module.exports = {
               // Main Window
               // Preload
               preload: {
-                js: path.join(rootDir, 'src/renderer/appPreload.tsx'),
+                js: path.join(rootDir, 'src/renderer/preload.tsx'),
               },
             },
           ],
