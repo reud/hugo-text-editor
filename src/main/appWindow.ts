@@ -21,8 +21,6 @@ export function createAppWindow(): BrowserWindow {
     height: 600,
     show: false,
     autoHideMenuBar: true,
-    frame: false,
-    titleBarStyle: 'hidden',
     icon: path.resolve('assets/images/appIcon.ico'),
     webPreferences: {
       nodeIntegration: false,

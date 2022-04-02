@@ -32,3 +32,6 @@ contextBridge.exposeInMainWorld('home', {
     return readFileAndParse(path);
   },
 })
+
+contextBridge.exposeInMainWorld('editor', {
+})
