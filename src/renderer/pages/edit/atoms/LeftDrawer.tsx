@@ -3,12 +3,6 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -93,7 +87,7 @@ export const LeftDrawer: React.FC = () => {
             >
               <MenuItem value={'diary'}>diary</MenuItem>
             </Select>
-            <Box pt={3} width={250}>
+            <Box pt={3}>
               <TextField fullWidth label={'Folder Place'} disabled={true} value={'diary/99991231'}/>
             </Box>
             <Box pt={3}>

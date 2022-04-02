@@ -4,7 +4,6 @@ import { inDev } from '@common/helpers';
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Home from '@renderer/pages/home/Home';
 import 'bootstrap/dist/css/bootstrap.css';
-import '../generated/tailwind.css';
 import Edit from '@renderer/pages/edit/Edit';
 
 // Say something

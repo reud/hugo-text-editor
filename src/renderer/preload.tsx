@@ -2,6 +2,7 @@ import { contextBridge } from  'electron';
 import { deleteNotExistData, pullRecentlyData, replaceSpecialItems, storeGet } from '@src/fileio/store';
 import { frontMatterSeparate, readFile, readFileAndParse } from '@src/fileio/file';
 import { RecentDataset, WritingData } from '@src/structure';
+import { execSync } from 'child_process';
 
 
 
@@ -34,4 +35,11 @@ contextBridge.exposeInMainWorld('home', {
 })
 
 contextBridge.exposeInMainWorld('editor', {
+  exec: (cmd: string,folderPlace: string) => {
+    const {contentBasePath} = storeGet('common') as {contentBasePath: string};
+
+    return execSync(`${cmd} 2>&1; true`,{
+      cwd: `${contentBasePath}${folderPlace}/`
+    }).toString();
+  }
 })
