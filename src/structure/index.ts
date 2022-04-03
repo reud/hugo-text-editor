@@ -1,8 +1,7 @@
 
 export interface WritingDataSettings {
   title: string;
-  date: string;
-  time: string;
+  datetime: string;
   author: string;
   category: string;
   templateStr: string;

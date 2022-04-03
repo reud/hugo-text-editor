@@ -37,6 +37,7 @@ const Home: () => React.FC = () => {
       label: ds.title,
       savePlace: ds.place
     }
+    infoCard.isContinue = true;
     return infoCard;
   });
 
@@ -65,7 +66,7 @@ const Home: () => React.FC = () => {
             </div>
             <div className="list-group" id="open-recent">
               {recentlyDatasetProps.map((prop,i) => {
-                <InfoCard {...prop} key={i} />
+                return <InfoCard {...prop} key={i} />;
               })}
             </div>
           </div>

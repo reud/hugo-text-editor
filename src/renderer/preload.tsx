@@ -1,9 +1,20 @@
 import { contextBridge } from  'electron';
-import { deleteNotExistData, pullRecentlyData, replaceSpecialItems, storeGet } from '@src/fileio/store';
-import { frontMatterSeparate, readFile, readFileAndParse } from '@src/fileio/file';
+import {
+  deleteNotExistData,
+  pullRecentlyData,
+  pushRecentlyData,
+  replaceSpecialItems,
+  storeGet, storeSet,
+} from '@src/fileio/store';
+import {
+  frontMatterMerge,
+  frontMatterSeparate,
+  readFile,
+  readFileAndParse,
+  setupFileGenFunction,
+} from '@src/fileio/file';
 import { RecentDataset, WritingData } from '@src/structure';
 import { execSync } from 'child_process';
-
 
 
 
@@ -41,5 +52,29 @@ contextBridge.exposeInMainWorld('editor', {
     return execSync(`${cmd} 2>&1; true`,{
       cwd: `${contentBasePath}${folderPlace}/`
     }).toString();
+  },
+  newFileGenerator: (isContinue: boolean,folderPath: string,statement: string) => {
+    return setupFileGenFunction(isContinue,folderPath,statement);
+  },
+  fetchCommonSettings: () => {
+    return storeGet('common');
+  },
+  pushRecentlyData: (p: string) => {
+    return pushRecentlyData(p);
+  },
+  frontMatterMerge: (attributes: any,body: string) => {
+    return frontMatterMerge(attributes,body);
+  },
+  storeSet: (key: string,value: string) => {
+    return storeSet(key,value);
+  },
+  getCategories: () => {
+    return storeGet('tags');
+  },
+  getAuthors: () => {
+    return storeGet('authors');
+  },
+  getTemplates: () => {
+    return storeGet('templates');
   }
 })

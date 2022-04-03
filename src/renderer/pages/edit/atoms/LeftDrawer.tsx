@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
@@ -15,14 +15,26 @@ import InputLabel from '@mui/material/InputLabel';
 // NOTE: なぜかeslintが見つけてくれないけどちゃんと動く
 // eslint-disable-next-line import/named
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { WritingData } from '@src/structure';
+import dayjs from 'dayjs';
 
-export const LeftDrawer: React.FC = () => {
+
+interface Shared {
+  sharedState: WritingData,
+  setSharedState: React.Dispatch<React.SetStateAction<WritingData>>
+}
+
+export const LeftDrawer: React.FC<Shared> = (state)=> {
+  const {sharedState,setSharedState} = state as Shared;
+
+  const defaultCategory = sharedState.category;
+  const defaultWriter = sharedState.author;
 
   const [usingState, setUsingState] = React.useState(false);
   const [dateTimeState, setDateTimeState] = React.useState<Date | null>(null);
-  const [draftState, setDraftState] = React.useState<boolean>(false);
-  const [selectedAuthorState, setSelectedAuthorState] = React.useState<string>("");
-  const [selectedCategoryState, setSelectedCategoryState] = React.useState<string>("");
+  const [draftState, setDraftState] = React.useState<boolean>(sharedState.draft);
+  const [selectedAuthorState, setSelectedAuthorState] = React.useState<string>(sharedState.author);
+  const [selectedCategoryState, setSelectedCategoryState] = React.useState<string>(sharedState.category);
 
   const handleDateTimeState = (newValue: Date | null) => {
     setDateTimeState(newValue);
@@ -36,6 +48,34 @@ export const LeftDrawer: React.FC = () => {
   const handleSelectCategoryChange = (event: SelectChangeEvent) => {
     setSelectedCategoryState(event.target.value as string);
   };
+
+  const categories = (window as any).editor.getCategories() as string[];
+  const authors = (window as any).editor.getAuthors() as string[];
+  const templates = (window as any).editor.getTemplates() as any;
+
+
+  useEffect(() => {
+    const ds = dayjs(dateTimeState);
+    console.log(ds);
+    setSharedState({
+      author: selectedAuthorState,
+      category: selectedCategoryState,
+      datetime: ds.format("YYYY-MM-DDTHH:mm:00+09:00"),
+      draft: false,
+      folderName: sharedState.folderName,
+      isContinue: false,
+      path: sharedState.path,
+      templateStr: sharedState.templateStr,
+      title: sharedState.title
+    })
+  },[dateTimeState,draftState,selectedCategoryState,selectedAuthorState])
+
+  useEffect(() => {
+    console.log('ini',sharedState);
+    console.log('ins',sharedState.datetime);
+    const d = new Date(sharedState.datetime);
+    setDateTimeState(d);
+  },[]);
 
   const toggleDrawer =
     (open: boolean) =>
@@ -51,7 +91,7 @@ export const LeftDrawer: React.FC = () => {
         setUsingState(open);
       };
 
-  const list = () => (
+  const content = () => (
     <Box
       sx={ {width: 250,m: 3} }
       role="presentation"
@@ -75,8 +115,13 @@ export const LeftDrawer: React.FC = () => {
               value={selectedAuthorState}
               label="Author"
               onChange={handleSelectAuthorChange}
+              defaultValue={defaultWriter}
             >
-              <MenuItem value={'reud'}>reud</MenuItem>
+              {
+                authors.map((author,i) => {
+                  return <MenuItem value={author} key={i}>{author}</MenuItem>;
+                })
+              }
             </Select>
             <InputLabel id="category-label">Category</InputLabel>
             <Select
@@ -84,14 +129,39 @@ export const LeftDrawer: React.FC = () => {
               value={selectedCategoryState}
               label="category"
               onChange={handleSelectCategoryChange}
+              defaultValue={defaultCategory}
             >
-              <MenuItem value={'diary'}>diary</MenuItem>
+              {
+                categories.map((category,i) => {
+                  return <MenuItem value={category} key={i}>{category}</MenuItem>;
+                })
+              }
             </Select>
             <Box pt={3}>
-              <TextField fullWidth label={'Folder Place'} disabled={true} value={'diary/99991231'}/>
+              <TextField fullWidth label={'Folder Place'} disabled={true} value={ sharedState.folderName }/>
             </Box>
             <Box pt={3}>
-              <TextField fullWidth label={'Last Generated'} disabled={true} value={'2022-04-03T07:32:42+09:00'}/>
+              <Typography>Templates</Typography>
+              {
+                Object.entries(templates).map(([k,v]) => {
+                  return <Button key={k} onClick={() => {
+                    const ds = dayjs(dateTimeState);
+                    console.log(ds);
+                    setSharedState({
+                      author: selectedAuthorState,
+                      category: selectedCategoryState,
+                      datetime: ds.format("YYYY-MM-DDTHH:mm:00+09:00"),
+                      draft: false,
+                      folderName: sharedState.folderName,
+                      isContinue: false,
+                      path: sharedState.path,
+                      templateStr: sharedState.templateStr + `\n${v}`,
+                      title: sharedState.title
+                    })
+                  }
+                  }>{ k }</Button>
+                })
+              }
             </Box>
           </FormGroup>
         </List>
@@ -108,7 +178,7 @@ export const LeftDrawer: React.FC = () => {
             open={usingState}
             onClose={toggleDrawer(false)}
           >
-            {list()}
+            {content()}
           </Drawer>
         </React.Fragment>
     </div>

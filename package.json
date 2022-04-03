@@ -1,6 +1,6 @@
 {
-  "name": "electron-react-typescript-webpack-2022",
-  "productName": "ERWT Boilerplate",
+  "name": "hugo-text-writer",
+  "productName": "hugo-text-writer",
   "version": "5.5.0",
   "description": "Custom boilerplate for writing Desktop Applications using Electron, React, Webpack, TypeScript in 2022",
   "main": ".webpack/main",

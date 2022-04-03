@@ -6,27 +6,20 @@ import fm from 'front-matter';
 import { storeGet } from '@src/fileio/store';
 import { WritingData } from '@src/structure';
 
-export class FileGenerator {
-  // folderPath: diary/hogehuga のイメージ
-  private contentBasePath: string;
-  private folderPath: string;
-  public save: (statement:string) => void;
-  constructor(isContinue: boolean,folderPath: string,statement: string) {
-    const store = new Store();
-    const { contentBasePath } = store.get('common') as {contentBasePath: string};
-    this.contentBasePath = contentBasePath;
-    this.folderPath = folderPath;
-    if (!isContinue) {
-      if (fs.existsSync(contentBasePath+folderPath)) {
-        throw new Error('すでにファイルかフォルダが存在しています');
-      }
-      fs.mkdirSync(contentBasePath+folderPath);
+export const setupFileGenFunction = (isContinue: boolean,folderPath: string,statement: string) => {
+  const { contentBasePath } = storeGet('common') as {contentBasePath: string};
+  if (!isContinue) {
+    if (fs.existsSync(contentBasePath+folderPath)) {
+      throw new Error('すでにファイルかフォルダが存在しています');
     }
-    fs.writeFileSync(contentBasePath+folderPath+'/index.md',statement);
-    this.save = (statement) => {
-      fs.writeFileSync(this.contentBasePath+this.folderPath+'/index.md',statement);
-    };
+    fs.mkdirSync(contentBasePath+folderPath);
   }
+  fs.writeFileSync(contentBasePath+folderPath+'/index.md',statement);
+  return {
+    save: (statement: string) => {
+      fs.writeFileSync(contentBasePath+folderPath+'/index.md',statement);
+    }
+  } 
 }
 
 export const frontMatterSeparate = (frontMatterMarkdown: string) => {
@@ -60,13 +53,11 @@ export const readFileAndParse = (path: string): WritingData  => {
   const splitted = p.split('/');
   const folderName = splitted[splitted.length -2];
   const objPath = splitted.slice(0,splitted.length-2).join('/') + '/';
-  const date = dayjs(attributes.date);
   return {
     title: attributes.title,
-    date: date.format('YYYY/MM/DD'),
-    time: attributes.time,
+    datetime: attributes.date,
     author: attributes.author,
-    category: attributes.categories[0],
+    category: attributes.categories,
     templateStr: body,
     path: objPath,
     folderName: folderName,

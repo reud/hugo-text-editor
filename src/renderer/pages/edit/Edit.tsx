@@ -14,25 +14,66 @@ import "../../../../node_modules/easymde/dist/easymde.min.css";
 const Edit: React.FC = () => {
   const location = useLocation();
   const state = location.state as WritingData;
-  const [articleTitleState,setArticleTitleState] = useState("");
-  const [contentState,setContentState] = useState("");
   const [shellInputState,setShellInputState] = useState("");
   const [shellOutState,setShellOutState] = useState("");
+  const [sharedState,setSharedState] = useState<WritingData>(state);
+  const [saveLoadingState,setSaveLoadingState] = useState<boolean>(false);
 
   const handleContentChange = useCallback((v: string) => {
-    setContentState(v);
+    const s = sharedState;
+    s.templateStr = v;
+    setSharedState(s);
   },[]);
   const handleArticleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setArticleTitleState(event.target.value);
+    const s = sharedState;
+    s.title = event.target.value;
+    setSharedState(s);
   };
   const handleShellInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShellInputState(event.target.value);
   };
 
+
+  const {contentBasePath} = (window as any).editor.fetchCommonSettings();
+
+  const saveWork = () => {
+    setSaveLoadingState(true);
+    const fileGenerator = (window as any).editor.newFileGenerator(state.isContinue,state.path+state.folderName,'');
+    const work = () => {
+      return new Promise((resolve,reject) => {
+        // front matter作成
+        const frontMatter = {
+          title: sharedState.title,
+          date: sharedState.datetime,
+          author: sharedState.author,
+          categories: sharedState.category,
+          libraries: ['mathjax'],
+          draft: sharedState.draft,
+        };
+        // front matterが付いたmdを作成
+        const merged = (window as any).editor.frontMatterMerge(frontMatter,sharedState.templateStr);
+        console.log(merged);
+        // 保存
+        fileGenerator.save(merged);
+        resolve(true);
+      });
+    }
+    work().then(() => {
+      setSaveLoadingState(false);
+    })
+  }
+
   useEffect(() => {
     const shellOutEl = document.getElementById('outlined-multiline-static');
     shellOutEl.scrollTop = shellOutEl.scrollHeight;
   },[shellOutState])
+
+  useEffect(() => {
+    const p = `${contentBasePath}${state.path}${state.folderName}/index.md`;
+    (window as any).editor.pushRecentlyData(p);
+    (window as any).editor.storeSet('workingAbsoluteDirectory',`${contentBasePath}${state.path}${state.folderName}/`);
+    // saveWork();
+  },[])
 
   const easymdeOptions = useMemo(() => {
     return {
@@ -43,23 +84,22 @@ const Edit: React.FC = () => {
       spellChecker: false,
       renderingConfig: {
         markedOptions: {
-          baseUrl: `file://hogehuga/`
+          baseUrl: `file://${contentBasePath + state.path + state.folderName}/`
         }
       }
     };
   },[]);
 
-  console.log(state);
   return (
     <div id="edit">
       <List disablePadding>
         <FormGroup>
-          <LeftDrawer />
+          <LeftDrawer {...{sharedState,setSharedState}}/>
           <Box pt={3}>
-            <TextField fullWidth label={'記事タイトル'}  value={articleTitleState} onChange={handleArticleTitleChange}/>
+            <TextField fullWidth label={'記事タイトル'}  value={sharedState.title} onChange={handleArticleTitleChange}/>
           </Box>
-          <SimpleMdeReact options={easymdeOptions} value={contentState} onChange={handleContentChange} />
-          <Button fullWidth variant="contained" color='primary'>Save</Button>
+          <SimpleMdeReact options={easymdeOptions} value={sharedState.templateStr} onChange={handleContentChange} />
+          <Button fullWidth variant="contained" color='primary' disabled={saveLoadingState} onClick={saveWork}>Save</Button>
           <Box p={3}>
             <TextField
               id="outlined-multiline-static"
@@ -87,6 +127,9 @@ const Edit: React.FC = () => {
               }}
               startAdornment={<InputAdornment position="start">{'ｷﾀ━(ﾟ∀ﾟ)━! >'}</InputAdornment>}
             />
+            <p>
+              {JSON.stringify(sharedState)}
+            </p>
           </FormControl>
         </FormGroup>
       </List>

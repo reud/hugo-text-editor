@@ -78,6 +78,15 @@ const schema: any = {
       'AtCoder',
     ]
   },
+  templates: {
+    type: 'object'
+  },
+  authors: {
+    type: 'array',
+    default: [
+      'reud',
+    ]
+  },
   recentlyOpenFiles: {
     type: 'array'
   }
@@ -89,7 +98,6 @@ const randomString = () => {
   return Array.from(Array(N)).map(()=>S[Math.floor(Math.random()*S.length)]).join('');
 }
 const store = new Store({schema});
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const replaceSpecialItems = (obj: unknown) => {
   const keys = Object.keys(obj);
