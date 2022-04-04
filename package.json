@@ -1,7 +1,7 @@
 {
   "name": "hugo-text-writer",
   "productName": "hugo-text-writer",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "Custom boilerplate for writing Desktop Applications using Electron, React, Webpack, TypeScript in 2022",
   "main": ".webpack/main",
   "scripts": {
