@@ -11,6 +11,7 @@ module.exports = {
     executableName: 'hugo-text-writer',
     // Set application copyright
     appCopyright: 'Copyright (C) 2022 reud',
+    icon: "icon.icns"
   },
   // Forge Makers
   makers: [
@@ -84,5 +85,17 @@ module.exports = {
         },
       },
     ],
+  ],
+  publishers: [
+    {
+      name: "@electron-forge/publisher-github",
+      platforms: ["darwin"],
+      config: {
+        repository: {
+          owner: "reud",
+          name: "hugo-text-editor"
+        },
+      },
+    },
   ],
 };

@@ -84,3 +84,5 @@ jspm_packages/
 
 # Electron-Forge
 out/
+
+PUBLISH_SCRIPT.txt

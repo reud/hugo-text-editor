@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog, autoUpdater } from 'electron';
 import { createAppWindow } from './appWindow';
 import { expressStartApp } from '@src/server/server';
 
@@ -50,3 +50,47 @@ console.log(app.getPath('userData'));
  * You can also put them in separate files and import them here.
  */
 expressStartApp();
+
+// ファイルの末尾に追加
+const server = 'https://update.electronjs.org'
+const feed = `${server}/reud/hugo-text-editor/${process.platform}-${process.arch}/${app.getVersion()}`
+
+
+if (app.isPackaged) {
+  autoUpdater.setFeedURL({
+    url: feed,
+  })
+  autoUpdater.checkForUpdates();
+
+  autoUpdater.on("update-downloaded", async () => {
+    const returnValue = await dialog.showMessageBox({
+      message: "アップロードあり",
+      detail: "再起動してインストール出来ます。",
+      buttons: ["再起動","後で"],
+    });
+    if (returnValue.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+
+  autoUpdater.on("update-available", () => {
+    dialog.showMessageBox({
+      message: "アップデートがあります。",
+      buttons: ["OK"],
+    });
+  });
+  autoUpdater.on("update-not-available", () => {
+    dialog.showMessageBox({
+      message: "アップデートはありません。",
+      buttons: ["OK"],
+    });
+    autoUpdater.on("error",() => {
+      dialog.showMessageBox({
+        message: "アップデートエラーが起きました",
+        buttons: ["OK"],
+      })
+    })
+  })
+}
+
+
