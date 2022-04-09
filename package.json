@@ -8,7 +8,7 @@
     "start": "cross-env NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "publish": "electron-forge publish --target @electron-forge/publisher-github",
     "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx",
     "tailwind": "npx tailwindcss -i tailwind/tailwind-input.css -o src/generated/tailwind.css"
   },

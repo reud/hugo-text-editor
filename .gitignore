@@ -86,3 +86,6 @@ jspm_packages/
 out/
 
 PUBLISH_SCRIPT.txt
+
+# direnv
+.envrc
