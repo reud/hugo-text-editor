@@ -61,7 +61,7 @@ export const LeftDrawer: React.FC<Shared> = (state)=> {
       author: selectedAuthorState,
       category: selectedCategoryState,
       datetime: ds.format("YYYY-MM-DDTHH:mm:00+09:00"),
-      draft: false,
+      draft: draftState,
       folderName: sharedState.folderName,
       isContinue: false,
       path: sharedState.path,
