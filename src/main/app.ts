@@ -1,6 +1,7 @@
-import { app, BrowserWindow, dialog, autoUpdater } from 'electron';
+import { app, BrowserWindow, dialog, autoUpdater,ipcMain } from 'electron';
 import { createAppWindow } from './appWindow';
 import { expressStartApp } from '@src/server/server';
+import { openFolder } from '@src/fileio/file';
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require('electron-squirrel-startup')) {
@@ -50,6 +51,10 @@ console.log(app.getPath('userData'));
  * You can also put them in separate files and import them here.
  */
 expressStartApp();
+
+ipcMain.handle('folder-open', async (ev) => {
+  return openFolder();
+});
 
 // ファイルの末尾に追加
 const server = 'https://update.electronjs.org'

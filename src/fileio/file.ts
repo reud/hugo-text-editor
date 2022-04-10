@@ -1,10 +1,9 @@
 import * as fs from 'fs';
-import dayjs from 'dayjs';
-import Store from 'electron-store';
 import yaml from 'yaml';
 import fm from 'front-matter';
 import { storeGet } from '@src/fileio/store';
 import { WritingData } from '@src/structure';
+import { dialog } from 'electron';
 
 export const setupFileGenFunction = (isContinue: boolean,folderPath: string,statement: string) => {
   const { contentBasePath } = storeGet('common') as {contentBasePath: string};
@@ -67,3 +66,16 @@ export const readFileAndParse = (path: string): WritingData  => {
 
 }
 
+
+export const openFolder = () => {
+  const {contentBasePath} = storeGet('common') as {contentBasePath: string};
+  const ret = dialog.showOpenDialogSync({
+    title: '編集する記事の存在するディレクトリの選択',
+    defaultPath: contentBasePath,
+    properties: [
+      'openDirectory'
+    ]
+  });
+  console.log(ret);
+  return ret;
+}

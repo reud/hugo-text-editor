@@ -17,6 +17,7 @@ export interface WritingData extends WritingDataSettings{
 export interface InfoCardProps extends WritingData {
   label: string;
   savePlace: string;
+  disabled: boolean;
 }
 
 export interface RecentDataset {

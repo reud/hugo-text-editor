@@ -1,4 +1,4 @@
-import { contextBridge } from  'electron';
+import { contextBridge,ipcRenderer } from  'electron';
 import {
   deleteNotExistData,
   pullRecentlyData,
@@ -8,13 +8,14 @@ import {
 } from '@src/fileio/store';
 import {
   frontMatterMerge,
-  frontMatterSeparate,
+  frontMatterSeparate, openFolder,
   readFile,
   readFileAndParse,
   setupFileGenFunction,
 } from '@src/fileio/file';
 import { RecentDataset, WritingData } from '@src/structure';
 import { execSync } from 'child_process';
+import * as fs from 'fs';
 
 
 
@@ -43,6 +44,12 @@ contextBridge.exposeInMainWorld('home', {
   readFileAndParse: (path:string):WritingData => {
     return readFileAndParse(path);
   },
+  checkFileExist: (path: string) => {
+    return fs.existsSync(path);
+  },
+  getIpcRenderer: () => {
+    return ipcRenderer;
+  }
 })
 
 contextBridge.exposeInMainWorld('editor', {
@@ -77,4 +84,5 @@ contextBridge.exposeInMainWorld('editor', {
   getTemplates: () => {
     return storeGet('templates');
   }
-})
+});
+
