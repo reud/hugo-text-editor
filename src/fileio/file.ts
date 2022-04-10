@@ -67,7 +67,7 @@ export const readFileAndParse = (path: string): WritingData  => {
 }
 
 
-export const openFolder = () => {
+export const openFolder = (): string => {
   const {contentBasePath} = storeGet('common') as {contentBasePath: string};
   const ret = dialog.showOpenDialogSync({
     title: '編集する記事の存在するディレクトリの選択',
@@ -77,5 +77,5 @@ export const openFolder = () => {
     ]
   });
   console.log(ret);
-  return ret;
+  return ret[0];
 }

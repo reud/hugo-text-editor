@@ -1,13 +1,16 @@
-import React from 'react';
+import React  from 'react';
 import { hot } from 'react-hot-loader';
 import { InfoCardProps, RecentDataset, WritingData, WritingDataSettings } from '@src/structure';
 import { InfoCard } from '@components/infoCard';
 import Typography from '@mui/material/Typography';
 import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const Home: () => React.FC = () => {
+
+const Home: React.FC = () => {
   const {common,diary,article,yesterdayDiary} =  (window as any).home.getSettings();
   const contentBasePath = common.contentBasePath;
+  const nav = useNavigate();
 
   const diarySavePlace = `${contentBasePath}${diary.path}${diary.folderName}/index.md`;
   const diaryInfoCard: InfoCardProps = {
@@ -54,24 +57,27 @@ const Home: () => React.FC = () => {
 
   const openFolder = () => {
     (window as any).home.getIpcRenderer().invoke('folder-open')
-      .then((data: any) => {
-        alert(data);
+      .then((path: any) => {
+        const wd = (window as any).home.readFileAndParse(`${path}/index.md`) as WritingData;
+        nav('/edit',{
+          state: wd
+        });
       })
       .catch((err: any) => {
         alert(err);
       });
   };
 
-  return function Home() {
+
     return (
       <div id='home'>
         <Typography variant={'h2'} align={'center'} pb={3}>
           HUGO TEXT WRITER
         </Typography>
-        <p className="my-basic-content"> config file in /Users/reud/Library/Application
-          Support/hugo-writer/config.json </p>
+        <p className="my-basic-content"> config file in /Users/USER/Library/Application
+          Support/hugo-text-writer/config.json </p>
         <Button onClick={openFolder}>
-          Open File
+          Open Folder
         </Button>
         <div className="my-basic-content">
           <div className="card my-card" >
@@ -97,7 +103,6 @@ const Home: () => React.FC = () => {
         </div>
       </div>
     )
-  }
 }
 
-export default hot(module)(Home());
+export default hot(module)(Home);
