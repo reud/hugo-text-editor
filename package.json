@@ -2,15 +2,14 @@
   "name": "hugo-text-writer",
   "productName": "hugo-text-writer",
   "version": "0.0.11",
-  "description": "Custom boilerplate for writing Desktop Applications using Electron, React, Webpack, TypeScript in 2022",
+  "description": "Hugo Article Writer",
   "main": ".webpack/main",
   "scripts": {
     "start": "cross-env NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish --target @electron-forge/publisher-github",
-    "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx",
-    "tailwind": "npx tailwindcss -i tailwind/tailwind-input.css -o src/generated/tailwind.css"
+    "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx"
   },
   "keywords": [
     "electron boilerplate",
@@ -24,13 +23,17 @@
     "ERWT"
   ],
   "author": {
-    "name": "codesbiome",
-    "url": "https://github.com/codesbiome"
+    "name": "reud",
+    "url": "https://github.com/reud"
   },
   "contributors": [
     {
       "name": "guasam",
       "url": "https://github.com/guasam"
+    },
+    {
+      "name": "codesbiome",
+      "url": "https://github.com/codesbiome"
     }
   ],
   "repository": {
