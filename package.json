@@ -12,15 +12,11 @@
     "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx"
   },
   "keywords": [
-    "electron boilerplate",
-    "minimal",
     "electron-webpack",
     "electron-react",
     "electron-typescript",
-    "hmr",
-    "boilerplate",
     "2022",
-    "ERWT"
+    "hugo"
   ],
   "author": {
     "name": "reud",
