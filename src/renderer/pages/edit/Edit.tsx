@@ -17,6 +17,8 @@ const Edit: React.FC = () => {
   const [shellInputState,setShellInputState] = useState("");
   const [shellOutState,setShellOutState] = useState("");
   const [sharedState,setSharedState] = useState<WritingData>(state);
+  // 何故かsharedStateだと上手くいかないのでタイトル部分だけ外に出す。
+  const [titleState,setTitleState] = useState<string>(state.title);
   const [saveLoadingState,setSaveLoadingState] = useState<boolean>(false);
 
   const handleContentChange = useCallback((v: string) => {
@@ -25,6 +27,7 @@ const Edit: React.FC = () => {
     setSharedState(s);
   },[]);
   const handleArticleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitleState(event.target.value);
     const s = sharedState;
     s.title = event.target.value;
     setSharedState(s);
@@ -72,7 +75,10 @@ const Edit: React.FC = () => {
     const p = `${contentBasePath}${state.path}${state.folderName}/index.md`;
     (window as any).editor.pushRecentlyData(p);
     (window as any).editor.storeSet('workingAbsoluteDirectory',`${contentBasePath}${state.path}${state.folderName}/`);
-    // saveWork();
+    saveWork();
+    const ss = sharedState;
+    ss.isContinue = true;
+    setSharedState(ss);
   },[])
 
   const easymdeOptions = useMemo(() => {
@@ -96,7 +102,7 @@ const Edit: React.FC = () => {
         <FormGroup>
           <LeftDrawer {...{sharedState,setSharedState}}/>
           <Box pt={3}>
-            <TextField fullWidth label={'記事タイトル'}  value={sharedState.title} onChange={handleArticleTitleChange}/>
+            <TextField fullWidth label={'記事タイトル'}  value={titleState} onChange={handleArticleTitleChange}/>
           </Box>
           <SimpleMdeReact options={easymdeOptions} value={sharedState.templateStr} onChange={handleContentChange} />
           <Button fullWidth variant="contained" color='primary' disabled={saveLoadingState} onClick={saveWork}>Save</Button>

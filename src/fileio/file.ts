@@ -8,6 +8,7 @@ import { dialog } from 'electron';
 export const setupFileGenFunction = (isContinue: boolean,folderPath: string,statement: string) => {
   const { contentBasePath } = storeGet('common') as {contentBasePath: string};
   if (!isContinue) {
+    console.log('checking path: ',contentBasePath+folderPath);
     if (fs.existsSync(contentBasePath+folderPath)) {
       throw new Error('すでにファイルかフォルダが存在しています');
     }

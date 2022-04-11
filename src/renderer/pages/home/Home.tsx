@@ -36,7 +36,7 @@ const Home: React.FC = () => {
   const articleInfoCard: InfoCardProps = {
     ...(article as WritingDataSettings),
     draft: true,
-    isContinue: (window as any).home.checkFileExist(diarySavePlace),
+    isContinue: (window as any).home.checkFileExist(articlePlace),
     label: '記事を書く',
     savePlace: articlePlace,
     disabled: (window as any).home.checkFileExist(articlePlace)
