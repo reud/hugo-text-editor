@@ -85,10 +85,6 @@ if (app.isPackaged) {
     });
   });
   autoUpdater.on("update-not-available", () => {
-    dialog.showMessageBox({
-      message: "アップデートはありません。",
-      buttons: ["OK"],
-    });
     autoUpdater.on("error",() => {
       dialog.showMessageBox({
         message: "アップデートエラーが起きました",
