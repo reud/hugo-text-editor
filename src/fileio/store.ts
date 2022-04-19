@@ -12,9 +12,9 @@ import Store from 'electron-store';
 // <RANDOM_STR>: 16 digits random string
 
 
-const diaryTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-writer/template/diary.md','utf-8')}`;
-const diaryTemplateYesterday = `${fs.readFileSync('/Users/reud/Projects/hugo-writer/template/yesterday-diary.md','utf-8')}`;
-const articleTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-writer/template/article.md','utf-8')}`;
+const diaryTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/diary.md','utf-8')}`;
+const diaryTemplateYesterday = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/yesterday-diary.md','utf-8')}`;
+const articleTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/article.md','utf-8')}`;
 
 const schema: any = {
   common: {
