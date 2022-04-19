@@ -21,11 +21,12 @@ const Edit: React.FC = () => {
   const [titleState,setTitleState] = useState<string>(state.title);
   const [saveLoadingState,setSaveLoadingState] = useState<boolean>(false);
 
-  const handleContentChange = useCallback((v: string) => {
+  const handleContentChange =(v: string) => {
     const s = sharedState;
     s.templateStr = v;
     setSharedState(s);
-  },[]);
+  };
+
   const handleArticleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitleState(event.target.value);
     const s = sharedState;

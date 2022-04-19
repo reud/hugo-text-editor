@@ -89,7 +89,7 @@ module.exports = {
   publishers: [
     {
       name: "@electron-forge/publisher-github",
-      platforms: ["arm64","darwin"],
+      platforms: ["arm64"],
       config: {
         repository: {
           owner: "reud",
