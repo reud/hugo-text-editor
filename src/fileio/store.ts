@@ -27,8 +27,7 @@ const schema: any = {
     type: 'object',
     default: {
       title: '<TODAY_DATE>の日記',
-      date: '<TODAY_DATE>',
-      time: '22:00',
+      datetime: '<TODAY_DATETIME>',
       author: 'reud',
       category: 'diary',
       templateStr: diaryTemplate,
@@ -40,8 +39,7 @@ const schema: any = {
     type: 'object',
     default: {
       title: '<YESTERDAY_DATE>の日記',
-      date: '<YESTERDAY_DATE>',
-      time: '22:00',
+      datetime: '<YESTERDAY_DATETIME>',
       author: 'reud',
       category: 'diary',
       templateStr: diaryTemplateYesterday,
@@ -53,8 +51,7 @@ const schema: any = {
     type: 'object',
     default: {
       title: '<TODAY_DATE>の記事',
-      date: '<TODAY_DATE>',
-      time: '22:00',
+      datetime: '<TODAY_DATETIME>',
       author: 'reud',
       category: '書き殴り',
       templateStr: articleTemplate,
@@ -79,7 +76,8 @@ const schema: any = {
     ]
   },
   templates: {
-    type: 'object'
+    type: 'object',
+    default: {}
   },
   authors: {
     type: 'array',
@@ -98,6 +96,7 @@ const randomString = () => {
   return Array.from(Array(N)).map(()=>S[Math.floor(Math.random()*S.length)]).join('');
 }
 const store = new Store({schema});
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const replaceSpecialItems = (obj: unknown) => {
   const keys = Object.keys(obj);
@@ -106,8 +105,9 @@ export const replaceSpecialItems = (obj: unknown) => {
   // eslint-disable-next-line @typescript-eslint/ban-types
   const ret:{ [s :string]:string }= {...(obj as {})};
   keys.forEach((k: string) => {
-    ret[k] = ret[k].replaceAll('<TODAY_DATETIME>',today.format());
+    ret[k] = ret[k].replaceAll('<TODAY_DATETIME>',today.format("YYYY-MM-DDTHH:mm:00+09:00"));
     ret[k] = ret[k].replaceAll('<TODAY_DATE>',today.format('YYYY/MM/DD'));
+    ret[k] = ret[k].replaceAll('<YESTERDAY_DATETIME>',yesterday.format("YYYY-MM-DDTHH:mm:00+09:00"));
     ret[k] = ret[k].replaceAll('<YESTERDAY_DATE>',yesterday.format('YYYY/MM/DD'));
     ret[k] = ret[k].replaceAll('<TODAY_DATE8D>',today.format('YYYYMMDD'));
     ret[k] = ret[k].replaceAll('<YESTERDAY_DATE8D>',yesterday.format('YYYYMMDD'));
