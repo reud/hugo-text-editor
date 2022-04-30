@@ -4,6 +4,7 @@
 import * as fs from 'fs';
 import dayjs from 'dayjs';
 import Store from 'electron-store';
+import { schema, StoreData } from '@src/fileio/storeSchema';
 // 形式
 // <DATETIME>: 2021-01-08T22:00:00+09:00
 // <DATE>: 2021/01/08
@@ -12,90 +13,12 @@ import Store from 'electron-store';
 // <RANDOM_STR>: 16 digits random string
 
 
-const diaryTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/diary.md','utf-8')}`;
-const diaryTemplateYesterday = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/yesterday-diary.md','utf-8')}`;
-const articleTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/article.md','utf-8')}`;
-
-const schema: any = {
-  common: {
-    type: 'object',
-    default: {
-      contentBasePath: '/Users/reud/Projects/prosaic-dustbox/content/',
-    }
-  },
-  diary: {
-    type: 'object',
-    default: {
-      title: '<TODAY_DATE>の日記',
-      datetime: '<TODAY_DATETIME>',
-      author: 'reud',
-      category: 'diary',
-      templateStr: diaryTemplate,
-      path: 'diary/',
-      folderName: '<TODAY_DATE8D>',
-    },
-  },
-  yesterdayDiary: {
-    type: 'object',
-    default: {
-      title: '<YESTERDAY_DATE>の日記',
-      datetime: '<YESTERDAY_DATETIME>',
-      author: 'reud',
-      category: 'diary',
-      templateStr: diaryTemplateYesterday,
-      path: 'diary/',
-      folderName: '<YESTERDAY_DATE8D>',
-    },
-  },
-  article: {
-    type: 'object',
-    default: {
-      title: '<TODAY_DATE>の記事',
-      datetime: '<TODAY_DATETIME>',
-      author: 'reud',
-      category: '書き殴り',
-      templateStr: articleTemplate,
-      path: 'v2_post/',
-      folderName: '<RANDOM_STR>',
-    },
-  },
-  workingAbsoluteDirectory: {
-    type: 'string',
-  },
-  tags: {
-    type: 'array',
-    default: [  // Topがデフォルトとして選択される
-      'diary',
-      'レポ',
-      'イベント',
-      'ポエム',
-      '書き殴り',
-      'ハッカソン',
-      'ISUCON',
-      'AtCoder',
-    ]
-  },
-  templates: {
-    type: 'object',
-    default: {}
-  },
-  authors: {
-    type: 'array',
-    default: [
-      'reud',
-    ]
-  },
-  recentlyOpenFiles: {
-    type: 'array'
-  }
-};
-
 const randomString = () => {
   const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
   const N=16
   return Array.from(Array(N)).map(()=>S[Math.floor(Math.random()*S.length)]).join('');
 }
-const store = new Store({schema});
+const store = new Store<StoreData>({schema});
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const replaceSpecialItems = (obj: unknown) => {
@@ -130,7 +53,7 @@ export const storeGet = (key: string) => {
   return store.get(key);
 }
 
-export const storeDelete = (key: string) => {
+export const storeDelete = (key: keyof StoreData) => {
   return store.delete(key);
 }
 
