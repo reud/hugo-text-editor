@@ -4,7 +4,7 @@ import {
   pullRecentlyData,
   pushRecentlyData,
   replaceSpecialItems,
-  storeGet, storeSet,
+  storeGet, storeGetAll, storeSet, storeSetAll,
 } from '@src/fileio/store';
 import {
   frontMatterMerge,
@@ -16,7 +16,17 @@ import {
 import { RecentDataset, WritingData } from '@src/structure';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import { StoreData } from '@src/fileio/storeSchema';
 
+
+contextBridge.exposeInMainWorld('settings',{
+  storeGetAll: ():StoreData => {
+    return storeGetAll();
+  },
+  storeSetAll: (storeData: StoreData) => {
+    storeSetAll(storeData);
+  }
+})
 
 
 contextBridge.exposeInMainWorld('home', {

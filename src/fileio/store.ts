@@ -53,6 +53,14 @@ export const storeGet = (key: string) => {
   return store.get(key);
 }
 
+export const storeGetAll = ():StoreData => {
+  return store.store;
+}
+
+export const storeSetAll = (storeData: StoreData) => {
+  store.store = storeData;
+}
+
 export const storeDelete = (key: keyof StoreData) => {
   return store.delete(key);
 }

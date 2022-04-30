@@ -13,7 +13,7 @@ const articleTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-edito
 
 
 export interface StoreData {
-  common: {
+  common:{
     contentBasePath: string
   },
   diary: EditorData;
