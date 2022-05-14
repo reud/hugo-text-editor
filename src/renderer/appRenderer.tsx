@@ -5,6 +5,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import Home from '@renderer/pages/home/Home';
 import 'bootstrap/dist/css/bootstrap.css';
 import Edit from '@renderer/pages/edit/Edit';
+import { Top } from './pages/top/Top';
 
 // Say something
 console.log('[ERWT] : Renderer execution started');
@@ -13,7 +14,7 @@ console.log('[ERWT] : Renderer execution started');
 const app = (
   <HashRouter>
     <Routes>
-      <Route path="/" element={<Home/>}/>
+      <Route path="/" element={<Top/>}/>
       <Route path="/home" element={<Home/>} />
       <Route path="/edit" element={<Edit/>} />
     </Routes>

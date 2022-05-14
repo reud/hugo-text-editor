@@ -11,6 +11,16 @@ const diaryTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/
 const diaryTemplateYesterday = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/yesterday-diary.md','utf-8')}`;
 const articleTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/article.md','utf-8')}`;
 
+export interface GlobalStoreData {
+  recentlyOpenProjects: Array<string>;
+}
+
+export const globalStoreSchema: Schema<GlobalStoreData> = {
+  recentlyOpenProjects: {
+    type: 'array',
+    default: []
+  },
+}
 
 export interface StoreData {
   common:{

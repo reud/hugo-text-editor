@@ -17,8 +17,9 @@ let appWindow: BrowserWindow;
 export function createAppWindow(): BrowserWindow {
   // Create new window instance
   appWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
     show: false,
-    fullscreen: true,
     autoHideMenuBar: true,
     icon: path.resolve('assets/images/appIcon.ico'),
     webPreferences: {

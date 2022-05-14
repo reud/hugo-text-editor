@@ -20,6 +20,11 @@ export interface InfoCardProps extends WritingData {
   disabled: boolean;
 }
 
+export interface ProjectInfoCardProps {
+  projectPath: string;
+  isExist: boolean;
+}
+
 export interface RecentDataset {
   title: string;
   place: string;
