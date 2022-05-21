@@ -6,6 +6,7 @@ import Home from '@renderer/pages/home/Home';
 import 'bootstrap/dist/css/bootstrap.css';
 import Edit from '@renderer/pages/edit/Edit';
 import { Top } from './pages/top/Top';
+import { Settings } from '@renderer/pages/settings/Settings';
 
 // Say something
 console.log('[ERWT] : Renderer execution started');
@@ -17,6 +18,7 @@ const app = (
       <Route path="/" element={<Top/>}/>
       <Route path="/home" element={<Home/>} />
       <Route path="/edit" element={<Edit/>} />
+      <Route path="/settings" element={<Settings/>} />
     </Routes>
   </HashRouter>
 );

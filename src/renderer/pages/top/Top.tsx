@@ -1,9 +1,10 @@
 import Drawer from '@mui/material/Drawer';
 import React from 'react';
-import { Box, Button, Grid, IconButton, makeStyles, styled, Typography } from '@mui/material';
+import { Box, Button, Grid, IconButton, styled, Typography } from '@mui/material';
 import { pickRandomEmoji } from '@src/util';
 import packageJson from './../../../../package.json';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { Link } from 'react-router-dom';
 
 const BottomButton = styled(IconButton)({
   bottom: 1.0,
@@ -40,9 +41,11 @@ export const Top: React.FC = () => {
                 </Typography>
               </Grid>
             </Grid>
-            <Button sx={{mt: 5,width: 200}} variant="outlined" size="medium" >
-              Open
-            </Button>
+            <Link to="/settings">
+              <Button sx={{mt: 5,width: 200}} variant="outlined" size="medium" >
+                Open
+              </Button>
+            </Link>
           </Box>
           <BottomButton size="medium">
             <SettingsIcon fontSize="medium"/>

@@ -25,7 +25,15 @@ contextBridge.exposeInMainWorld('settings',{
   },
   storeSetAll: (storeData: StoreData) => {
     storeSetAll(storeData);
-  }
+  },
+  checkFolderExist: (path: string) => {
+    if(!fs.existsSync(path)) return false;
+    return fs.lstatSync(path).isDirectory();
+  },
+  checkFileExist: (path: string) => {
+    if(!fs.existsSync(path)) return false;
+    return fs.lstatSync(path).isFile();
+  },
 })
 
 
