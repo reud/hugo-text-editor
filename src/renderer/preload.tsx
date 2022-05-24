@@ -8,7 +8,7 @@ import {
 } from '@src/fileio/store';
 import {
   frontMatterMerge,
-  frontMatterSeparate, openFolder,
+  frontMatterSeparate,
   readFile,
   readFileAndParse,
   setupFileGenFunction,
@@ -34,6 +34,9 @@ contextBridge.exposeInMainWorld('settings',{
     if(!fs.existsSync(path)) return false;
     return fs.lstatSync(path).isFile();
   },
+  getIpcRenderer: () => {
+    return ipcRenderer;
+  }
 })
 
 

@@ -15,13 +15,16 @@ import {
 import { Delete, Folder } from '@mui/icons-material';
 import { Bottom } from '@renderer/pages/settings/atoms/Bottom';
 import { FilePathInputField } from '@renderer/pages/edit/components/FilePathInputField';
+import { WritingData } from '@src/structure';
 
 
 // TODO: UIについて考える。
 export const Settings: React.FC = () => {
 
   const [useDiaryState,setUseDiaryState] = React.useState(true);
+  const [useArticleState, setUseArticleState] = React.useState(true);
   const mockProjectPath = "/Users/reud/Projects/prosaic-dustbox/"
+
 
   const checkFolderExistApi:(path: string)=>boolean = (window as any)
     .settings
@@ -29,6 +32,23 @@ export const Settings: React.FC = () => {
   const checkFileExistApi:(path: string)=>boolean = (window as any)
     .settings
     .checkFileExist;
+
+
+  const openDiaryFolder = (defaultPath: string) => {
+    return (window as any).settings.getIpcRenderer().invoke('openDiaryFolder',defaultPath)
+  };
+
+  const openArticleFolder = (defaultPath: string) => {
+    return (window as any).settings.getIpcRenderer().invoke('openArticleFolder',defaultPath)
+  };
+
+  const openDiaryTemplateFile = (defaultPath: string) => {
+    return (window as any).settings.getIpcRenderer().invoke('openDiaryTemplateFile',defaultPath)
+  };
+
+  const openArticleTemplateFile = (defaultPath: string) => {
+    return (window as any).settings.getIpcRenderer().invoke('openArticleTemplateFile',defaultPath)
+  };
 
   const isMarkdownFile = (path: string) => {
     const splitted = path.split('.');
@@ -39,11 +59,21 @@ export const Settings: React.FC = () => {
   const handleUseDiaryCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUseDiaryState(event.target.checked);
   };
+  const handleUseArticleCheckBoxChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    setUseArticleState(ev.target.checked);
+  }
 
   const diaryPathConstraint = (path: string) => {
     return checkFolderExistApi(mockProjectPath+path);
   }
+  const articlePathConstraint = (path: string) => {
+    return checkFolderExistApi(mockProjectPath+path);
+  }
   const diaryTemplateConstraint = (path: string) => {
+    if (!isMarkdownFile(path)) return false;
+    return checkFileExistApi(mockProjectPath+path);
+  }
+  const articleTemplateConstraint = (path: string) => {
     if (!isMarkdownFile(path)) return false;
     return checkFileExistApi(mockProjectPath+path);
   }
@@ -65,7 +95,9 @@ export const Settings: React.FC = () => {
           <Paper variant="outlined">
             <h3>📖Diary</h3>
             <FormControlLabel control={
-              <Checkbox defaultChecked  onChange={handleUseDiaryCheckBoxChange}/>
+              <Checkbox
+                defaultChecked
+                onChange={handleUseDiaryCheckBoxChange}/>
             }
                               label="UseForDiaryWriting" />
             <FormGroup>
@@ -75,7 +107,10 @@ export const Settings: React.FC = () => {
                 constraint={diaryPathConstraint}
                 errorString={"Folder Not Found"}
                 label={"Diary Path(ProjectRelative)"}
-                folderIconPushed={() => "hugahuga"}
+                folderIconPushed={() => {
+                  const path = openDiaryFolder(mockProjectPath);
+                  return path.replace(mockProjectPath,'');
+                }}
                 disabled={!useDiaryState} />
               <Grid container>
                 <FilePathInputField
@@ -84,7 +119,10 @@ export const Settings: React.FC = () => {
                   constraint={diaryTemplateConstraint}
                   errorString={"File Not Found or Bad Extension (.md only)"}
                   label={"Diary Template(ProjectRelative)"}
-                  folderIconPushed={() => "hugahuga"}
+                  folderIconPushed={() => {
+                    const path = openDiaryTemplateFile(mockProjectPath);
+                    return path.replace(mockProjectPath,'');
+                  }}
                   disabled={!useDiaryState} />
               </Grid>
             </FormGroup>
@@ -94,46 +132,35 @@ export const Settings: React.FC = () => {
           <Paper variant="outlined">
             <h3>📚Article</h3>
             <FormGroup>
-              <FormControlLabel control={<Checkbox defaultChecked />} label="UseForArticleWriting" />
+              <FormControlLabel control={<Checkbox
+                defaultChecked
+                onChange={handleUseArticleCheckBoxChange}/>}
+                                label="UseForArticleWriting" />
               <Grid container>
-                <Grid item sx={{mt: 2,mr: 3}}>
-                  Diary Path(ProjectRelative):
-                </Grid>
-                <Grid item sx={{mt: 1,mr: 3,width: 400}}>
-                  <TextField
-                    error
-                    id="standard-error-helper-text"
-                    defaultValue="hoge/huga/nyaa"
-                    helperText="Folder Not Found."
-                    variant="standard"
-                    sx={{width:400}}
-                  />
-                </Grid>
-                <Grid item>
-                  <IconButton size="medium">
-                    <Folder fontSize="large"/>
-                  </IconButton>
-                </Grid>
+                <FilePathInputField
+                  defaultValue="content/diary"
+                  onValueChanged={(v) => {console.log(v)}}
+                  constraint={articlePathConstraint}
+                  errorString={"Folder Not Found"}
+                  label={"Article Path(ProjectRelative)"}
+                  folderIconPushed={() => {
+                    const path = openArticleFolder(mockProjectPath);
+                    return path.replace(mockProjectPath,'');
+                  }}
+                  disabled={!useArticleState} />
               </Grid>
               <Grid container>
-                <Grid item sx={{mt: 2,mr: 3}}>
-                  Diary Template(ProjectRelative):
-                </Grid>
-                <Grid item sx={{mt: 1,mr: 3,width: 400}}>
-                  <TextField
-                    error
-                    id="standard-error-helper-text"
-                    defaultValue="hoge/huga/nyaa"
-                    helperText="File Not Found (.md)"
-                    variant="standard"
-                    sx={{width:400}}
-                  />
-                </Grid>
-                <Grid item>
-                  <IconButton size="medium">
-                    <Folder fontSize="large"/>
-                  </IconButton>
-                </Grid>
+                <FilePathInputField
+                  defaultValue="template/article.md"
+                  onValueChanged={(v) => {console.log(v)}}
+                  constraint={articleTemplateConstraint}
+                  errorString={"File Not Found or Bad Extension (.md only)"}
+                  label={"Article Template(ProjectRelative)"}
+                  folderIconPushed={() => {
+                    const path = openArticleTemplateFile(mockProjectPath);
+                    return path.replace(mockProjectPath,'');
+                  }}
+                  disabled={!useArticleState} />
               </Grid>
             </FormGroup>
           </Paper>

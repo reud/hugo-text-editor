@@ -1,7 +1,13 @@
 import { app, BrowserWindow, dialog, autoUpdater,ipcMain } from 'electron';
 import { createAppWindow } from './appWindow';
 import { expressStartApp } from '@src/server/server';
-import { openFolder } from '@src/fileio/file';
+import {
+  openArticleFolder,
+  openArticleTemplateFile,
+  openDiaryFolder,
+  openDiaryTemplateFile,
+  openFolder,
+} from '@src/fileio/file';
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require('electron-squirrel-startup')) {
@@ -52,8 +58,25 @@ console.log(app.getPath('userData'));
  */
 expressStartApp();
 
+// dialog open系はipc経由じゃないと動かない
 ipcMain.handle('folder-open', async (ev) => {
   return openFolder();
+});
+
+ipcMain.handle('openDiaryFolder',  (ev,arg) => {
+  return openDiaryFolder(arg);
+});
+
+ipcMain.handle('openArticleFolder',  (ev,arg) => {
+  return openArticleFolder(arg);
+});
+
+ipcMain.handle('openDiaryTemplat eFile',  (ev,arg) => {
+  return openDiaryTemplateFile(arg);
+});
+
+ipcMain.handle('openArticleTemplateFile',  (ev,arg) => {
+  return openArticleTemplateFile(arg);
 });
 
 // ファイルの末尾に追加

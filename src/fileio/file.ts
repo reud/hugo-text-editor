@@ -77,6 +77,51 @@ export const openFolder = (): string => {
       'openDirectory'
     ]
   });
-  console.log(ret);
+  return ret[0];
+}
+// TODO: キャンセル時の処理
+
+export const openDiaryFolder = (defaultPath: string): string => {
+  const ret = dialog.showOpenDialogSync({
+    title: '日記の存在するディレクトリの選択',
+    defaultPath: defaultPath,
+    properties: [
+      'openDirectory'
+    ]
+  });
+  return ret[0];
+}
+
+export const openArticleFolder = (defaultPath: string): string => {
+  const ret = dialog.showOpenDialogSync({
+    title: '記事の存在するディレクトリの選択',
+    defaultPath: defaultPath,
+    properties: [
+      'openDirectory'
+    ]
+  });
+  return ret[0];
+}
+
+export const openDiaryTemplateFile = (defaultPath: string): string => {
+  const ret = dialog.showOpenDialogSync({
+    title: '日記のテンプレートファイルの選択',
+    defaultPath: defaultPath,
+    properties: [
+      'openFile'
+    ]
+  });
+  return ret[0];
+}
+
+
+export const openArticleTemplateFile = (defaultPath: string): string => {
+  const ret = dialog.showOpenDialogSync({
+    title: '記事のテンプレートファイルの選択',
+    defaultPath: defaultPath,
+    properties: [
+      'openFile'
+    ]
+  });
   return ret[0];
 }
