@@ -77,7 +77,7 @@ export const openFolder = (): string => {
       'openDirectory'
     ]
   });
-  return ret[0];
+  return ret == undefined ?  '' : ret[0];
 }
 // TODO: キャンセル時の処理
 
@@ -89,7 +89,7 @@ export const openDiaryFolder = (defaultPath: string): string => {
       'openDirectory'
     ]
   });
-  return ret[0];
+  return ret == undefined ?  '' : ret[0];
 }
 
 export const openArticleFolder = (defaultPath: string): string => {
@@ -100,7 +100,7 @@ export const openArticleFolder = (defaultPath: string): string => {
       'openDirectory'
     ]
   });
-  return ret[0];
+  return ret == undefined ?  '' : ret[0];
 }
 
 export const openDiaryTemplateFile = (defaultPath: string): string => {
@@ -109,9 +109,12 @@ export const openDiaryTemplateFile = (defaultPath: string): string => {
     defaultPath: defaultPath,
     properties: [
       'openFile'
+    ],
+    filters: [
+      { name: 'MarkdownFile', extensions: ['md'] },
     ]
   });
-  return ret[0];
+  return ret == undefined ?  '' : ret[0];
 }
 
 
@@ -121,7 +124,12 @@ export const openArticleTemplateFile = (defaultPath: string): string => {
     defaultPath: defaultPath,
     properties: [
       'openFile'
+    ],
+    filters: [
+      { name: 'MarkdownFile', extensions: ['md'] },
     ]
   });
-  return ret[0];
+  const v = ret == undefined ?  '' : ret[0];
+  console.log(v);
+  return v;
 }

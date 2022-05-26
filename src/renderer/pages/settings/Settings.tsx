@@ -23,6 +23,12 @@ export const Settings: React.FC = () => {
 
   const [useDiaryState,setUseDiaryState] = React.useState(true);
   const [useArticleState, setUseArticleState] = React.useState(true);
+  const [diaryFolderPath, setDiaryFolderPath] = React.useState('');
+  const [articleFolderPath, setArticleFolderPath] = React.useState('');
+  const [diaryTemplatePath, setDiaryTemplatePath] = React.useState('');
+  const [diaryArticlePath, setArticleTemplatePath] = React.useState('');
+  const [authors, setAuthors] = React.useState(['author1','author2','author3']);
+  const [tags, setTags] = React.useState(['tag1','tag2','tag3']);
   const mockProjectPath = "/Users/reud/Projects/prosaic-dustbox/"
 
 
@@ -103,24 +109,24 @@ export const Settings: React.FC = () => {
             <FormGroup>
               <FilePathInputField
                 defaultValue="content/v2_post"
-                onValueChanged={(v) => {console.log(v)}}
+                onValueChanged={(v) => {setDiaryFolderPath(v);}}
                 constraint={diaryPathConstraint}
                 errorString={"Folder Not Found"}
                 label={"Diary Path(ProjectRelative)"}
-                folderIconPushed={() => {
-                  const path = openDiaryFolder(mockProjectPath);
+                folderIconPushed={async () => {
+                  const path = await openDiaryFolder(mockProjectPath);
                   return path.replace(mockProjectPath,'');
                 }}
                 disabled={!useDiaryState} />
               <Grid container>
                 <FilePathInputField
                   defaultValue="template/diary.md"
-                  onValueChanged={(v) => {console.log(v)}}
+                  onValueChanged={(v) => {setDiaryTemplatePath(v);}}
                   constraint={diaryTemplateConstraint}
                   errorString={"File Not Found or Bad Extension (.md only)"}
                   label={"Diary Template(ProjectRelative)"}
-                  folderIconPushed={() => {
-                    const path = openDiaryTemplateFile(mockProjectPath);
+                  folderIconPushed={async () => {
+                    const path = await openDiaryTemplateFile(mockProjectPath);
                     return path.replace(mockProjectPath,'');
                   }}
                   disabled={!useDiaryState} />
@@ -139,12 +145,12 @@ export const Settings: React.FC = () => {
               <Grid container>
                 <FilePathInputField
                   defaultValue="content/diary"
-                  onValueChanged={(v) => {console.log(v)}}
+                  onValueChanged={(v) => {setArticleFolderPath(v);}}
                   constraint={articlePathConstraint}
                   errorString={"Folder Not Found"}
                   label={"Article Path(ProjectRelative)"}
-                  folderIconPushed={() => {
-                    const path = openArticleFolder(mockProjectPath);
+                  folderIconPushed={async () => {
+                    const path = await openArticleFolder(mockProjectPath);
                     return path.replace(mockProjectPath,'');
                   }}
                   disabled={!useArticleState} />
@@ -152,12 +158,12 @@ export const Settings: React.FC = () => {
               <Grid container>
                 <FilePathInputField
                   defaultValue="template/article.md"
-                  onValueChanged={(v) => {console.log(v)}}
+                  onValueChanged={(v) => {setArticleTemplatePath(v);}}
                   constraint={articleTemplateConstraint}
                   errorString={"File Not Found or Bad Extension (.md only)"}
                   label={"Article Template(ProjectRelative)"}
-                  folderIconPushed={() => {
-                    const path = openArticleTemplateFile(mockProjectPath);
+                  folderIconPushed={async () => {
+                    const path = await openArticleTemplateFile(mockProjectPath);
                     return path.replace(mockProjectPath,'');
                   }}
                   disabled={!useArticleState} />
@@ -176,27 +182,25 @@ export const Settings: React.FC = () => {
               <Button variant="contained">Add</Button>
             </Grid>
             <List dense={false}>
-              <ListItem secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <Delete />
-                </IconButton>
-              }>
-                tag1
-              </ListItem>
-              <ListItem secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <Delete />
-                </IconButton>
-              }>
-                tag2
-              </ListItem>
-              <ListItem secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <Delete />
-                </IconButton>
-              }>
-                tag3
-              </ListItem>
+              {
+                tags.map((v,i) => {
+                  return (
+                    <ListItem key={v} secondaryAction={
+                      <IconButton edge="end" aria-label="delete" onClick={
+                        () => {
+                          const array = [...tags];
+                          array.splice(i,1);
+                          setTags(array);
+                        }
+                      }>
+                        <Delete />
+                      </IconButton>
+                    }>
+                      {v}
+                    </ListItem>
+                  )
+                })
+              }
             </List>
           </Paper>
         </Grid>
@@ -208,31 +212,30 @@ export const Settings: React.FC = () => {
               <Button variant="contained">Add</Button>
             </Grid>
             <List dense={false}>
-              <ListItem secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <Delete />
-                </IconButton>
-              }>
-                author1
-              </ListItem>
-              <ListItem secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <Delete />
-                </IconButton>
-              }>
-                author2
-              </ListItem>
-              <ListItem secondaryAction={
-                <IconButton edge="end" aria-label="delete">
-                  <Delete />
-                </IconButton>
-              }>
-                author3
-              </ListItem>
+              {
+                authors.map((v,i) => {
+                  return (
+                    <ListItem key={v} secondaryAction={
+                      <IconButton edge="end" aria-label="delete" onClick={
+                        () => {
+                          const array = [...authors];
+                          array.splice(i,1);
+                          setAuthors(array);
+                        }
+                      }>
+                        <Delete />
+                      </IconButton>
+                    }>
+                      {v}
+                    </ListItem>
+                  )
+                })
+              }
             </List>
           </Paper>
         </Grid>
       </Grid>
+      <Paper sx={{height:100}} />
       <Bottom />
     </div>
   )

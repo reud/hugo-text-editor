@@ -8,7 +8,7 @@ interface FilePathInputFieldInterface {
   constraint: (value: string) => boolean; // if false, this field appears error
   errorString: string;
   label: string;
-  folderIconPushed: ()=>string;
+  folderIconPushed: ()=>Promise<string>;
   disabled: boolean;
   defaultValue: string;
 }
@@ -58,8 +58,8 @@ export const FilePathInputField: React.FC<FilePathInputFieldInterface> = (props)
           />
         </Grid>
         <Grid item>
-          <IconButton size="medium" onClick={() => {
-            const result = props.folderIconPushed();
+          <IconButton size="medium" onClick={async () => {
+            const result = await props.folderIconPushed();
             console.log(result);
             setCurrentValue(result);
           }}>

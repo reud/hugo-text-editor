@@ -63,19 +63,19 @@ ipcMain.handle('folder-open', async (ev) => {
   return openFolder();
 });
 
-ipcMain.handle('openDiaryFolder',  (ev,arg) => {
+ipcMain.handle('openDiaryFolder',  async (ev,arg) => {
   return openDiaryFolder(arg);
 });
 
-ipcMain.handle('openArticleFolder',  (ev,arg) => {
+ipcMain.handle('openArticleFolder',  async (ev,arg) => {
   return openArticleFolder(arg);
 });
 
-ipcMain.handle('openDiaryTemplat eFile',  (ev,arg) => {
+ipcMain.handle('openDiaryTemplateFile',  async (ev,arg) => {
   return openDiaryTemplateFile(arg);
 });
 
-ipcMain.handle('openArticleTemplateFile',  (ev,arg) => {
+ipcMain.handle('openArticleTemplateFile',  async (ev,arg) => {
   return openArticleTemplateFile(arg);
 });
 
