@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   Checkbox, Divider,
@@ -23,13 +23,61 @@ export const Settings: React.FC = () => {
 
   const [useDiaryState,setUseDiaryState] = React.useState(true);
   const [useArticleState, setUseArticleState] = React.useState(true);
-  const [diaryFolderPath, setDiaryFolderPath] = React.useState('');
-  const [articleFolderPath, setArticleFolderPath] = React.useState('');
-  const [diaryTemplatePath, setDiaryTemplatePath] = React.useState('');
-  const [diaryArticlePath, setArticleTemplatePath] = React.useState('');
+  const [diaryFolderPath, setDiaryFolderPath] = React.useState('content/diary');
+  const [articleFolderPath, setArticleFolderPath] = React.useState('content/v2_post');
+  const [diaryTemplatePath, setDiaryTemplatePath] = React.useState('template/diary.md');
+  const [articleTemplatePath, setArticleTemplatePath] = React.useState('template/article.md');
+
+  const [okButtonEnable, setOKButtonEnable] = React.useState(false);
+  const [applyButtonEnable,setApplyButtonEnable] = React.useState(false);
+
   const [authors, setAuthors] = React.useState(['author1','author2','author3']);
   const [tags, setTags] = React.useState(['tag1','tag2','tag3']);
-  const mockProjectPath = "/Users/reud/Projects/prosaic-dustbox/"
+  const mockProjectPath = "/Users/reud/Projects/prosaic-dustbox/";
+
+  const [tagField,setTagField] = React.useState("");
+  const [authorField,setAuthorField] = React.useState("");
+
+  useEffect(
+    () => {
+      let passConstraints = true;
+      if (useDiaryState) {
+        if(!diaryTemplateConstraint(diaryTemplatePath)) {
+          console.log('check constraint: diaryTemplateConstraint failed');
+          passConstraints = false;
+        }
+        if(!diaryPathConstraint(diaryFolderPath)) {
+          console.log('check constraint: diaryPathConstraint failed');
+          passConstraints = false;
+        }
+      }
+      if (useArticleState) {
+        if (!articlePathConstraint(articleFolderPath)) {
+          console.log('check constraint: articlePathConstraint failed');
+          passConstraints = false;
+        }
+        if (!articleTemplateConstraint(articleTemplatePath)) {
+          console.log('check constraint: articleTemplateConstraint failed');
+          passConstraints = false;
+        }
+      }
+      if(!authorsConstraint()) passConstraints = false;
+      if (!tagsConstraint()) passConstraints = false;
+
+      setOKButtonEnable(passConstraints);
+      setApplyButtonEnable(passConstraints);
+    },[
+      useDiaryState,
+      useArticleState,
+      diaryFolderPath,
+      articleFolderPath,
+      diaryTemplatePath,
+      articleTemplatePath,
+      tags,
+      authors
+    ]);
+
+
 
 
   const checkFolderExistApi:(path: string)=>boolean = (window as any)
@@ -84,6 +132,14 @@ export const Settings: React.FC = () => {
     return checkFileExistApi(mockProjectPath+path);
   }
 
+  const tagsConstraint = () => {
+    return tags.length > 0;
+  }
+
+  const authorsConstraint = () => {
+    return authors.length > 0;
+  }
+
   return (
     <div id='settings'>
       <Grid container direction="column" alignItems="center">
@@ -108,7 +164,7 @@ export const Settings: React.FC = () => {
                               label="UseForDiaryWriting" />
             <FormGroup>
               <FilePathInputField
-                defaultValue="content/v2_post"
+                defaultValue={diaryFolderPath}
                 onValueChanged={(v) => {setDiaryFolderPath(v);}}
                 constraint={diaryPathConstraint}
                 errorString={"Folder Not Found"}
@@ -120,7 +176,7 @@ export const Settings: React.FC = () => {
                 disabled={!useDiaryState} />
               <Grid container>
                 <FilePathInputField
-                  defaultValue="template/diary.md"
+                  defaultValue={diaryTemplatePath}
                   onValueChanged={(v) => {setDiaryTemplatePath(v);}}
                   constraint={diaryTemplateConstraint}
                   errorString={"File Not Found or Bad Extension (.md only)"}
@@ -144,7 +200,7 @@ export const Settings: React.FC = () => {
                                 label="UseForArticleWriting" />
               <Grid container>
                 <FilePathInputField
-                  defaultValue="content/diary"
+                  defaultValue={articleFolderPath}
                   onValueChanged={(v) => {setArticleFolderPath(v);}}
                   constraint={articlePathConstraint}
                   errorString={"Folder Not Found"}
@@ -157,7 +213,7 @@ export const Settings: React.FC = () => {
               </Grid>
               <Grid container>
                 <FilePathInputField
-                  defaultValue="template/article.md"
+                  defaultValue={articleTemplatePath}
                   onValueChanged={(v) => {setArticleTemplatePath(v);}}
                   constraint={articleTemplateConstraint}
                   errorString={"File Not Found or Bad Extension (.md only)"}
@@ -178,8 +234,22 @@ export const Settings: React.FC = () => {
           <Paper variant="outlined">
             <h4>🔖Tags</h4>
             <Grid container>
-              <TextField id="standard-basic" label="Add New Tag" variant="standard" />
-              <Button variant="contained">Add</Button>
+              <TextField
+                         label="Add New Tag"
+                         variant="standard"
+                         value={tagField}
+                         onChange={(ev) => setTagField(ev.target.value)}
+                         id="standard-error-helper-text"
+                         error={tags.length == 0}
+                         helperText="tags can not empty"
+              />
+              <Button variant="contained"
+                      onClick={() => {
+                        const v = [...tags];
+                        v.push(tagField);
+                        setTags(v);
+                      }}
+              >Add</Button>
             </Grid>
             <List dense={false}>
               {
@@ -208,8 +278,22 @@ export const Settings: React.FC = () => {
           <Paper variant="outlined">
             <h4>👨‍🦲Authors</h4>
             <Grid container>
-              <TextField id="standard-basic" label="Add New Tag" variant="standard" />
-              <Button variant="contained">Add</Button>
+              <TextField label="Add Author Tag"
+                         variant="standard"
+                         value={authorField}
+                         onChange={(ev) => setAuthorField(ev.target.value)}
+                         id="standard-error-helper-text"
+                         error={authors.length == 0}
+                         helperText="authors can not empty"
+
+              />
+              <Button variant="contained"
+                      onClick={() => {
+                        const v = [...authors];
+                        v.push(authorField);
+                        setAuthors(v);
+                      }}
+              >Add</Button>
             </Grid>
             <List dense={false}>
               {
@@ -236,7 +320,12 @@ export const Settings: React.FC = () => {
         </Grid>
       </Grid>
       <Paper sx={{height:100}} />
-      <Bottom />
+      <Bottom  OnCancelClicked={() => console.log('')}
+               OnApplyClicked={() => console.log('')}
+               OnOKClicked={() => console.log('')}
+               applyButtonEnable={applyButtonEnable}
+               okButtonEnable={okButtonEnable}
+      />
     </div>
   )
 }

@@ -23,6 +23,7 @@ export const FilePathInputField: React.FC<FilePathInputFieldInterface> = (props)
     const constraintResult = props.constraint(currentValue);
     setIsError(!constraintResult);
     setHelperText(constraintResult ? "" : props.errorString);
+    props.onValueChanged(currentValue);
   },[currentValue])
 
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
