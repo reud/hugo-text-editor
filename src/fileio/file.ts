@@ -1,9 +1,14 @@
 import * as fs from 'fs';
 import yaml from 'yaml';
 import fm from 'front-matter';
-import { storeGet } from '@src/fileio/store';
+import {
+  openUnEditableProjectConfigFileWithInitiate,
+  storeGet,
+  UnEditableProjectConfigInterface,
+} from '@src/fileio/uneditableProjectConfig';
 import { WritingData } from '@src/structure';
 import { dialog } from 'electron';
+import { openProjectConfigFile, ProjectConfigInterface } from '@src/fileio/projectConfig';
 
 export const setupFileGenFunction = (isContinue: boolean,folderPath: string,statement: string) => {
   const { contentBasePath } = storeGet('common') as {contentBasePath: string};
@@ -68,6 +73,38 @@ export const readFileAndParse = (path: string): WritingData  => {
 }
 
 
+export const checkAndInitializeDirectory = (projectPath: string) => {
+  // ディレクトリがあるかどうか
+  const isExist = fs.existsSync(projectPath + '/.hugo-text-writer');
+  if (!isExist) {
+    fs.mkdirSync(projectPath + '/.hugo-text-writer');
+  }
+
+  if (!fs.statSync(projectPath + '/.hugo-text-writer').isDirectory()) {
+    fs.mkdirSync(projectPath + '/.hugo-text-writer');
+  }
+  // 設定ファイルの初期化
+  openProjectConfigFile(projectPath);
+}
+
+
+export const openProject = (): string => {
+  const homedir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
+  const ret = dialog.showOpenDialogSync({
+    title: 'hugoプロジェクトのルートフォルダの選択',
+    defaultPath: homedir,
+    properties: [
+      'openDirectory'
+    ]
+  });
+  const v = ret == undefined ?  '' : ret[0];
+  if (v == '') return '';
+
+  checkAndInitializeDirectory(v);
+  return v;
+}
+
+
 export const openFolder = (): string => {
   const {contentBasePath} = storeGet('common') as {contentBasePath: string};
   const ret = dialog.showOpenDialogSync({
@@ -79,7 +116,6 @@ export const openFolder = (): string => {
   });
   return ret == undefined ?  '' : ret[0];
 }
-// TODO: キャンセル時の処理
 
 export const openDiaryFolder = (defaultPath: string): string => {
   const ret = dialog.showOpenDialogSync({
@@ -132,4 +168,17 @@ export const openArticleTemplateFile = (defaultPath: string): string => {
   const v = ret == undefined ?  '' : ret[0];
   console.log(v);
   return v;
+}
+
+export interface ProjectConfig {
+  UnEditableProjectConfig: UnEditableProjectConfigInterface;
+  ProjectConfig: ProjectConfigInterface;
+}
+
+export const fetchProjectConfigFromProjectPath = (projectPath: string): ProjectConfig => {
+  const projectConfig = openProjectConfigFile(projectPath);
+  const uneditable = openUnEditableProjectConfigFileWithInitiate(projectPath,projectConfig.store);
+  console.log('config: ',projectConfig.store);
+  console.log('uneditable: ',uneditable.store);
+  return { ProjectConfig: projectConfig.store, UnEditableProjectConfig: uneditable.store }
 }

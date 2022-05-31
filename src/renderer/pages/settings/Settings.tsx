@@ -14,29 +14,51 @@ import {
 } from '@mui/material';
 import { Delete, Folder } from '@mui/icons-material';
 import { Bottom } from '@renderer/pages/settings/atoms/Bottom';
-import { FilePathInputField } from '@renderer/pages/edit/components/FilePathInputField';
+import { FilePathInputField } from '@renderer/pages/settings/components/FilePathInputField';
 import { WritingData } from '@src/structure';
+import Store from 'electron-store';
+import { ProjectConfigInterface } from '@src/fileio/projectConfig';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+interface SettingsState {
+  projectPath: string;
+}
 
-// TODO: UIについて考える。
-export const Settings: React.FC = () => {
+export const Settings: React.FC= () => {
+  const location = useLocation();
+  const state = location.state as SettingsState;
+  console.log('settings loading: ',state);
+  // FIXME: 関係ないパスなのにコンポーネントが読み込まれてしまうことがある。
+  if (state == null)
+  {
+    return (<div></div>);
+  }
+  const projectConfigStore = (window as any).settings
+                              .openProjectConfigFile(state.projectPath) as Store<ProjectConfigInterface>;
 
-  const [useDiaryState,setUseDiaryState] = React.useState(true);
-  const [useArticleState, setUseArticleState] = React.useState(true);
-  const [diaryFolderPath, setDiaryFolderPath] = React.useState('content/diary');
-  const [articleFolderPath, setArticleFolderPath] = React.useState('content/v2_post');
-  const [diaryTemplatePath, setDiaryTemplatePath] = React.useState('template/diary.md');
-  const [articleTemplatePath, setArticleTemplatePath] = React.useState('template/article.md');
+  console.log('projectConfigStore: ',projectConfigStore);
+  const initialProjectConfig = projectConfigStore.store;
+  console.log('initialProjectConfig: ',initialProjectConfig);
+
+  const projectName = state.projectPath.split('/')[state.projectPath.split('/').length - 1];
+
+  const [useDiaryState,setUseDiaryState] = React.useState(!!initialProjectConfig.diary);
+  const [useArticleState, setUseArticleState] = React.useState(!!initialProjectConfig.article);
+  const [diaryFolderPath, setDiaryFolderPath] = React.useState(initialProjectConfig.diary?.folderPath || '');
+  const [articleFolderPath, setArticleFolderPath] = React.useState(initialProjectConfig.article?.folderPath || '');
+  const [diaryTemplatePath, setDiaryTemplatePath] = React.useState(initialProjectConfig.diary?.templatePath || '');
+  const [articleTemplatePath, setArticleTemplatePath] = React.useState(initialProjectConfig.article?.templatePath || '');
 
   const [okButtonEnable, setOKButtonEnable] = React.useState(false);
   const [applyButtonEnable,setApplyButtonEnable] = React.useState(false);
 
-  const [authors, setAuthors] = React.useState(['author1','author2','author3']);
-  const [tags, setTags] = React.useState(['tag1','tag2','tag3']);
-  const mockProjectPath = "/Users/reud/Projects/prosaic-dustbox/";
+  const [authors, setAuthors] = React.useState(initialProjectConfig.authors);
+  const [tags, setTags] = React.useState(initialProjectConfig.tags);
 
   const [tagField,setTagField] = React.useState("");
   const [authorField,setAuthorField] = React.useState("");
+
+  const [allData,setAllData] = React.useState<ProjectConfigInterface>(initialProjectConfig);
 
   useEffect(
     () => {
@@ -64,6 +86,14 @@ export const Settings: React.FC = () => {
       if(!authorsConstraint()) passConstraints = false;
       if (!tagsConstraint()) passConstraints = false;
 
+      if (passConstraints) {
+        setAllData({
+          article: useArticleState ? { folderPath: articleFolderPath, templatePath: articleTemplatePath } : null,
+          authors: authors,
+          diary: useDiaryState ? { folderPath: diaryFolderPath, templatePath: diaryTemplatePath } : null,
+          tags: tags
+        });
+      }
       setOKButtonEnable(passConstraints);
       setApplyButtonEnable(passConstraints);
     },[
@@ -76,9 +106,6 @@ export const Settings: React.FC = () => {
       tags,
       authors
     ]);
-
-
-
 
   const checkFolderExistApi:(path: string)=>boolean = (window as any)
     .settings
@@ -118,18 +145,18 @@ export const Settings: React.FC = () => {
   }
 
   const diaryPathConstraint = (path: string) => {
-    return checkFolderExistApi(mockProjectPath+path);
+    return checkFolderExistApi(state.projectPath+path);
   }
   const articlePathConstraint = (path: string) => {
-    return checkFolderExistApi(mockProjectPath+path);
+    return checkFolderExistApi(state.projectPath+path);
   }
   const diaryTemplateConstraint = (path: string) => {
     if (!isMarkdownFile(path)) return false;
-    return checkFileExistApi(mockProjectPath+path);
+    return checkFileExistApi(state.projectPath+path);
   }
   const articleTemplateConstraint = (path: string) => {
     if (!isMarkdownFile(path)) return false;
-    return checkFileExistApi(mockProjectPath+path);
+    return checkFileExistApi(state.projectPath+path);
   }
 
   const tagsConstraint = () => {
@@ -144,11 +171,11 @@ export const Settings: React.FC = () => {
     <div id='settings'>
       <Grid container direction="column" alignItems="center">
         <Grid item>
-          <Typography>⚙️ [Project Name] Settings</Typography>
+          <Typography>⚙️ {projectName} Settings</Typography>
         </Grid>
         <Grid item>
           <Typography variant="caption">
-            place: /User/reud/hoge/huga/.hugo-text-writer/config.json
+            place: {state.projectPath}/.hugo-text-writer/config.json
           </Typography>
         </Grid>
       </Grid>
@@ -170,8 +197,8 @@ export const Settings: React.FC = () => {
                 errorString={"Folder Not Found"}
                 label={"Diary Path(ProjectRelative)"}
                 folderIconPushed={async () => {
-                  const path = await openDiaryFolder(mockProjectPath);
-                  return path.replace(mockProjectPath,'');
+                  const path = await openDiaryFolder(state.projectPath);
+                  return path.replace(state.projectPath,'');
                 }}
                 disabled={!useDiaryState} />
               <Grid container>
@@ -182,8 +209,8 @@ export const Settings: React.FC = () => {
                   errorString={"File Not Found or Bad Extension (.md only)"}
                   label={"Diary Template(ProjectRelative)"}
                   folderIconPushed={async () => {
-                    const path = await openDiaryTemplateFile(mockProjectPath);
-                    return path.replace(mockProjectPath,'');
+                    const path = await openDiaryTemplateFile(state.projectPath);
+                    return path.replace(state.projectPath,'');
                   }}
                   disabled={!useDiaryState} />
               </Grid>
@@ -206,8 +233,8 @@ export const Settings: React.FC = () => {
                   errorString={"Folder Not Found"}
                   label={"Article Path(ProjectRelative)"}
                   folderIconPushed={async () => {
-                    const path = await openArticleFolder(mockProjectPath);
-                    return path.replace(mockProjectPath,'');
+                    const path = await openArticleFolder(state.projectPath);
+                    return path.replace(state.projectPath,'');
                   }}
                   disabled={!useArticleState} />
               </Grid>
@@ -219,8 +246,8 @@ export const Settings: React.FC = () => {
                   errorString={"File Not Found or Bad Extension (.md only)"}
                   label={"Article Template(ProjectRelative)"}
                   folderIconPushed={async () => {
-                    const path = await openArticleTemplateFile(mockProjectPath);
-                    return path.replace(mockProjectPath,'');
+                    const path = await openArticleTemplateFile(state.projectPath);
+                    return path.replace(state.projectPath,'');
                   }}
                   disabled={!useArticleState} />
               </Grid>
@@ -321,8 +348,13 @@ export const Settings: React.FC = () => {
       </Grid>
       <Paper sx={{height:100}} />
       <Bottom  OnCancelClicked={() => console.log('')}
-               OnApplyClicked={() => console.log('')}
-               OnOKClicked={() => console.log('')}
+               OnApplyClicked={() => {
+                 projectConfigStore.store = allData;
+               }}
+               OnOKClicked={() => {
+                 projectConfigStore.store = allData;
+                 console.log(projectConfigStore.store);
+               }}
                applyButtonEnable={applyButtonEnable}
                okButtonEnable={okButtonEnable}
       />

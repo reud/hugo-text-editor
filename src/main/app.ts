@@ -6,7 +6,7 @@ import {
   openArticleTemplateFile,
   openDiaryFolder,
   openDiaryTemplateFile,
-  openFolder,
+  openFolder, openProject,
 } from '@src/fileio/file';
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
@@ -61,6 +61,10 @@ expressStartApp();
 // dialog open系はipc経由じゃないと動かない
 ipcMain.handle('folder-open', async (ev) => {
   return openFolder();
+});
+// dialog open系はipc経由じゃないと動かない
+ipcMain.handle('openProject', async (ev) => {
+  return openProject();
 });
 
 ipcMain.handle('openDiaryFolder',  async (ev,arg) => {

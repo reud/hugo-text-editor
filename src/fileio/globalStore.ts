@@ -1,6 +1,16 @@
-import Store from 'electron-store';
-import { GlobalStoreData, globalStoreSchema } from '@src/fileio/storeSchema';
+import Store, { Schema } from 'electron-store';
 
+
+export interface GlobalStoreData {
+  recentlyOpenProjects: Array<string>;
+}
+
+export const globalStoreSchema: Schema<GlobalStoreData> = {
+  recentlyOpenProjects: {
+    type: 'array',
+    default: []
+  },
+}
 
 const globalStore = new Store<GlobalStoreData>({ schema: globalStoreSchema });
 

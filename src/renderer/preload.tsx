@@ -3,10 +3,10 @@ import {
   deleteNotExistData,
   pullRecentlyData,
   pushRecentlyData,
-  replaceSpecialItems,
-  storeGet, storeGetAll, storeSet, storeSetAll,
-} from '@src/fileio/store';
+  storeGet, storeSet,
+} from '@src/fileio/uneditableProjectConfig';
 import {
+  fetchProjectConfigFromProjectPath,
   frontMatterMerge,
   frontMatterSeparate,
   readFile,
@@ -16,16 +16,12 @@ import {
 import { RecentDataset, WritingData } from '@src/structure';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
-import { StoreData } from '@src/fileio/storeSchema';
+import { openProjectConfigFile, ProjectConfigInterface } from '@src/fileio/projectConfig';
+import Store from 'electron-store';
+
 
 
 contextBridge.exposeInMainWorld('settings',{
-  storeGetAll: ():StoreData => {
-    return storeGetAll();
-  },
-  storeSetAll: (storeData: StoreData) => {
-    storeSetAll(storeData);
-  },
   checkFolderExist: (path: string) => {
     if(!fs.existsSync(path)) return false;
     return fs.lstatSync(path).isDirectory();
@@ -36,6 +32,9 @@ contextBridge.exposeInMainWorld('settings',{
   },
   getIpcRenderer: () => {
     return ipcRenderer;
+  },
+  openProjectConfigFile: (projectPath: string): Store<ProjectConfigInterface> => {
+    return openProjectConfigFile(projectPath);
   }
 })
 
@@ -54,13 +53,8 @@ contextBridge.exposeInMainWorld('home', {
       }
     });
   },
-  getSettings: () => {
-    return {
-      common: replaceSpecialItems(storeGet('common')),
-      diary: replaceSpecialItems(storeGet('diary')),
-      article: replaceSpecialItems(storeGet('article')),
-      yesterdayDiary: replaceSpecialItems(storeGet('yesterdayDiary'))
-    }
+  fetchProjectConfigFromProjectPath: (projectPath: string) => {
+    return fetchProjectConfigFromProjectPath(projectPath);
   },
   readFileAndParse: (path:string):WritingData => {
     return readFileAndParse(path);

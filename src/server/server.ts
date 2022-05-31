@@ -1,6 +1,6 @@
 import server from 'express';
 import multer, {diskStorage} from 'multer';
-import { storeGet } from '@src/fileio/store';
+import { storeGet } from '@src/fileio/uneditableProjectConfig';
 
 export const expressStartApp = () => {
   const storage = diskStorage({

@@ -14,11 +14,19 @@ export interface WritingData extends WritingDataSettings{
   draft: boolean
 }
 
-export interface InfoCardProps extends WritingData {
+
+export interface EditState {
+  projectPath: string;
+  writingData: WritingData;
+}
+
+
+export interface InfoCardProps extends EditState {
   label: string;
   savePlace: string;
   disabled: boolean;
 }
+
 
 export interface ProjectInfoCardProps {
   projectPath: string;

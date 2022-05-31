@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { WritingData } from '@src/structure';
+import { EditState, WritingData } from '@src/structure';
 import { hot } from 'react-hot-loader';
 import { LeftDrawer } from '@renderer/pages/edit/atoms/LeftDrawer';
 import { Button, FormControl, FormGroup, Input, InputAdornment, InputLabel, List } from '@mui/material';
@@ -13,12 +13,12 @@ import "../../../../node_modules/easymde/dist/easymde.min.css";
 
 const Edit: React.FC = () => {
   const location = useLocation();
-  const state = location.state as WritingData;
+  const state = location.state as EditState;
   const [shellInputState,setShellInputState] = useState("");
   const [shellOutState,setShellOutState] = useState("");
-  const [sharedState,setSharedState] = useState<WritingData>(state);
+  const [sharedState,setSharedState] = useState<WritingData>(state.writingData);
   // 何故かsharedStateだと上手くいかないのでタイトル部分だけ外に出す。
-  const [titleState,setTitleState] = useState<string>(state.title);
+  const [titleState,setTitleState] = useState<string>(state.writingData.title);
   const [saveLoadingState,setSaveLoadingState] = useState<boolean>(false);
 
   const handleContentChange =(v: string) => {
@@ -42,7 +42,8 @@ const Edit: React.FC = () => {
 
   const saveWork = () => {
     setSaveLoadingState(true);
-    const fileGenerator = (window as any).editor.newFileGenerator(state.isContinue,state.path+state.folderName,'');
+    const fileGenerator = (window as any).editor.newFileGenerator(state.writingData.isContinue,
+      state.projectPath+state.writingData.path+state.writingData.folderName,'');
     const work = () => {
       return new Promise((resolve,reject) => {
         // front matter作成
@@ -73,9 +74,8 @@ const Edit: React.FC = () => {
   },[shellOutState])
 
   useEffect(() => {
-    const p = `${contentBasePath}${state.path}${state.folderName}/index.md`;
+    const p = `${state.projectPath+state.writingData.path+state.writingData.folderName}/index.md`;
     (window as any).editor.pushRecentlyData(p);
-    (window as any).editor.storeSet('workingAbsoluteDirectory',`${contentBasePath}${state.path}${state.folderName}/`);
     saveWork();
     const ss = sharedState;
     ss.isContinue = true;
@@ -91,7 +91,7 @@ const Edit: React.FC = () => {
       spellChecker: false,
       renderingConfig: {
         markedOptions: {
-          baseUrl: `file://${contentBasePath + state.path + state.folderName}/`
+          baseUrl: `file://${state.projectPath+state.writingData.path+state.writingData.folderName}/`
         }
       }
     };
@@ -127,7 +127,7 @@ const Edit: React.FC = () => {
               onChange={handleShellInputChange}
               onKeyUp={(e) => {
                 if (e.key == 'Enter') {
-                  const output = (window as any).editor.exec(shellInputState,state.path+ state.folderName);
+                  const output = (window as any).editor.exec(shellInputState,state.writingData.path+ state.writingData.folderName);
                   setShellOutState(shellOutState+ `ｷﾀ━(ﾟ∀ﾟ)━! > ${shellInputState}\n` + `${output}\n`);
                   setShellInputState("");
                 }

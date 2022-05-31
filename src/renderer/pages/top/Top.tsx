@@ -4,7 +4,8 @@ import { Box, Button, Grid, IconButton, styled, Typography } from '@mui/material
 import { pickRandomEmoji } from '@src/util';
 import packageJson from './../../../../package.json';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { HomeState } from '@renderer/pages/home/Home';
 
 const BottomButton = styled(IconButton)({
   bottom: 1.0,
@@ -14,6 +15,20 @@ const BottomButton = styled(IconButton)({
 
 
 export const Top: React.FC = () => {
+  const nav = useNavigate();
+
+  const  openProject = async () => {
+    const renderer = (window as any).home.getIpcRenderer();
+    const path = await renderer.invoke('openProject');
+    if (path === '') return;
+    console.log('path',path);
+    const state: HomeState = { projectPath: path };
+    nav('/home',{
+      state,
+    })
+  }
+
+
   return (
     <div>
       <React.Fragment key="drawer">
@@ -42,7 +57,10 @@ export const Top: React.FC = () => {
               </Grid>
             </Grid>
             <Link to="/settings">
-              <Button sx={{mt: 5,width: 200}} variant="outlined" size="medium" >
+              <Button sx={{mt: 5,width: 200}}
+                      variant="outlined"
+                      size="medium"
+                      onClick={openProject}>
                 Open
               </Button>
             </Link>
