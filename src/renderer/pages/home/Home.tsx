@@ -5,7 +5,6 @@ import { InfoCard } from '@components/infoCard';
 import Typography from '@mui/material/Typography';
 import { Button } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ProjectConfig } from '@src/fileio/file';
 import dayjs from 'dayjs';
 import { randomString } from '@src/util';
 
@@ -33,10 +32,11 @@ const replaceSpecialItems = (obj: unknown) => {
 
 
 const Home: React.FC = () => {
+  const contentPath = 'content/';
   const location = useLocation();
   const state = location.state as HomeState;
 
-  const projectConfigs:ProjectConfig = (window as any).home.fetchProjectConfigFromProjectPath(state.projectPath);
+  const projectConfigs = api.openProjectConfigFile(state.projectPath);
 
   const [diary,setDiary] = useState<InfoCardProps | null>(null);
   const [yesterdayDiary,setYesterdayDiary] = useState<InfoCardProps | null>(null);
@@ -48,26 +48,27 @@ const Home: React.FC = () => {
   // initiate
   useEffect(
     () => {
+      console.log('homestate: ',state);
       // diaryが有効なら
-      if (projectConfigs.ProjectConfig.diary) {
+      if (projectConfigs.diary) {
         const yesterdayDiaryWritingDataSettings = replaceSpecialItems({
-          author: projectConfigs.ProjectConfig.authors[0],
-          category: projectConfigs.UnEditableProjectConfig.diary.category,
-          datetime: projectConfigs.UnEditableProjectConfig.diary.datetime.replace('<TODAY','<YESTERDAY'),
-          folderName: projectConfigs.UnEditableProjectConfig.diary.folderName.replace('<TODAY','<YESTERDAY'),
-          path: projectConfigs.ProjectConfig.diary.folderPath,
-          templateStr: projectConfigs.UnEditableProjectConfig.diary.templateStr.replace('<TODAY','<YESTERDAY'),
-          title: projectConfigs.UnEditableProjectConfig.diary.title.replace('<TODAY','<YESTERDAY')
+          author: projectConfigs.authors[0],
+          category: projectConfigs.diary.category,
+          datetime: projectConfigs.diary.datetime.replace('<TODAY','<YESTERDAY'),
+          folderName: projectConfigs.diary.folderName.replace('<TODAY','<YESTERDAY'),
+          path: projectConfigs.diary.folderPath,
+          templateStr: projectConfigs.diary.templateStr.replace('<TODAY','<YESTERDAY'),
+          title: projectConfigs.diary.title.replace('<TODAY','<YESTERDAY')
         }) as any as WritingDataSettings;
 
         const diaryWritingDataSettings = replaceSpecialItems({
-          author: projectConfigs.ProjectConfig.authors[0],
-          category: projectConfigs.UnEditableProjectConfig.diary.category,
-          datetime: projectConfigs.UnEditableProjectConfig.diary.datetime,
-          folderName: projectConfigs.UnEditableProjectConfig.diary.folderName,
-          path: projectConfigs.ProjectConfig.diary.folderPath,
-          templateStr: projectConfigs.UnEditableProjectConfig.diary.templateStr,
-          title: projectConfigs.UnEditableProjectConfig.diary.title
+          author: projectConfigs.authors[0],
+          category: projectConfigs.diary.category,
+          datetime: projectConfigs.diary.datetime,
+          folderName: projectConfigs.diary.folderName,
+          path: projectConfigs.diary.folderPath,
+          templateStr: projectConfigs.diary.templateStr,
+          title: projectConfigs.diary.title
         }) as any as WritingDataSettings;
 
         const diarySavePlace = `${state.projectPath}/${diaryWritingDataSettings.path}${diaryWritingDataSettings.folderName}/index.md`;
@@ -75,12 +76,12 @@ const Home: React.FC = () => {
           writingData: {
             ...diaryWritingDataSettings,
             draft: false,
-            isContinue: (window as any).home.checkFileExist(diarySavePlace),
+            isContinue: api.checkFileExist(diarySavePlace),
           },
           projectPath: state.projectPath,
           label: '日記を書く',
           savePlace: diarySavePlace,
-          disabled: (window as any).home.checkFileExist(diarySavePlace)
+          disabled: api.checkFileExist(diarySavePlace)
         }
 
         const yesterdayDiaryPlace = `${state.projectPath}/${yesterdayDiaryWritingDataSettings.path}${yesterdayDiaryWritingDataSettings.folderName}/index.md`;
@@ -88,12 +89,12 @@ const Home: React.FC = () => {
           writingData: {
             ...yesterdayDiaryWritingDataSettings,
             draft: false,
-            isContinue: (window as any).home.checkFileExist(diarySavePlace),
+            isContinue: api.checkFileExist(diarySavePlace),
           },
           projectPath: state.projectPath,
           label: '昨日の日記を書く',
           savePlace: yesterdayDiaryPlace,
-          disabled: (window as any).home.checkFileExist(yesterdayDiaryPlace)
+          disabled: api.checkFileExist(yesterdayDiaryPlace)
         }
 
         // change state
@@ -101,15 +102,15 @@ const Home: React.FC = () => {
         setYesterdayDiary(yesterdayDiaryInfoCard);
       }
 
-      if (projectConfigs.ProjectConfig.article) {
+      if (projectConfigs.article) {
         const articleWritingDataSettings = replaceSpecialItems({
-          author: projectConfigs.ProjectConfig.authors[0],
-          category: projectConfigs.UnEditableProjectConfig.article.category,
-          datetime: projectConfigs.UnEditableProjectConfig.article.datetime,
-          folderName: projectConfigs.UnEditableProjectConfig.article.folderName,
-          path: projectConfigs.ProjectConfig.article.folderPath,
-          templateStr: projectConfigs.UnEditableProjectConfig.article.templateStr,
-          title: projectConfigs.UnEditableProjectConfig.article.title
+          author: projectConfigs.authors[0],
+          category: projectConfigs.article.category,
+          datetime: projectConfigs.article.datetime,
+          folderName: projectConfigs.article.folderName,
+          path: projectConfigs.article.folderPath,
+          templateStr: projectConfigs.article.templateStr,
+          title: projectConfigs.article.title
         }) as any as WritingDataSettings;
 
         const articlePlace = `${state.projectPath}/${articleWritingDataSettings.path}${articleWritingDataSettings.folderName}/index.md`;
@@ -117,12 +118,12 @@ const Home: React.FC = () => {
           writingData: {
             ...articleWritingDataSettings,
             draft: false,
-            isContinue: (window as any).home.checkFileExist(articlePlace),
+            isContinue: api.checkFileExist(articlePlace),
           },
           projectPath: state.projectPath,
           label: '記事を書く',
           savePlace: articlePlace,
-          disabled: (window as any).home.checkFileExist(articlePlace)
+          disabled: api.checkFileExist(articlePlace)
         }
 
         setArticle(articleInfoCard);
@@ -136,9 +137,9 @@ const Home: React.FC = () => {
 
 
 
-  const recentlyDataset =  (window as any).home.genRecentlyDataset() as RecentDataset[];
+  const recentlyDataset =  api.genRecentlyDataset(state.projectPath) as RecentDataset[];
   const recentlyDatasetProps = recentlyDataset.reverse().map((ds,i) => {
-    const wd = (window as any).home.readFileAndParse(ds.place) as WritingData;
+    const wd = api.readFileAndParse(state.projectPath,ds.place.replace(state.projectPath,'')) as WritingData;
     const infoCard: InfoCardProps = {
       writingData: wd,
       projectPath: state.projectPath,
@@ -151,11 +152,18 @@ const Home: React.FC = () => {
   });
 
   const openFolder = () => {
-    (window as any).home.getIpcRenderer().invoke('folder-open')
+    api.getIpcRenderer().invoke('openFolder',state.projectPath)
       .then((path: any) => {
-        const wd = (window as any).home.readFileAndParse(`${path}/index.md`) as WritingData;
+        console.log('readPath: ',path);
+        const relativeFilePath = path.replace(state.projectPath,'') + '/index.md';
+        console.log('relativeFilePath: ',relativeFilePath);
+        const wd = api.readFileAndParse(state.projectPath,relativeFilePath);
+        console.log('wd: ', wd);
         nav('/edit',{
-          state: wd
+          state: {
+            projectPath:  state.projectPath,
+            writingData: wd
+          }
         });
       })
       .catch((err: any) => {

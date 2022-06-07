@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
+import Store from 'electron-store';
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -9,6 +10,10 @@ declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 console.log('APP_WINDOW_WEBPACK_ENTRY',APP_WINDOW_WEBPACK_ENTRY);
 console.log('APP_WINDOW_PRELOAD_WEBPACK_ENTRY',APP_WINDOW_PRELOAD_WEBPACK_ENTRY);
 let appWindow: BrowserWindow;
+
+// https://issuehunt.io/r/sindresorhus/electron-store/issues/212
+Store.initRenderer();
+
 
 /**
  * Create Application Window

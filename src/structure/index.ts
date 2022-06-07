@@ -5,8 +5,8 @@ export interface WritingDataSettings {
   author: string;
   category: string;
   templateStr: string;
-  path: string;
-  folderName: string;
+  path: string; // ex: content/article/
+  folderName: string; // ex: 20220615
 }
 
 export interface WritingData extends WritingDataSettings{
@@ -36,4 +36,13 @@ export interface ProjectInfoCardProps {
 export interface RecentDataset {
   title: string;
   place: string;
+}
+
+export interface FrontMatter {
+  title: string
+  date: string
+  author: string
+  categories: string
+  libraries: Array<string>
+  draft: boolean
 }

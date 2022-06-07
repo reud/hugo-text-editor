@@ -24,6 +24,16 @@ interface SettingsState {
   projectPath: string;
 }
 
+class GenreInterface {
+}
+
+interface CanSettingConfig {
+  diary: Partial<GenreInterface> | null;
+  article: Partial<GenreInterface> | null;
+  tags: string[];
+  authors: string[];
+}
+
 export const Settings: React.FC= () => {
   const location = useLocation();
   const state = location.state as SettingsState;
@@ -33,12 +43,30 @@ export const Settings: React.FC= () => {
   {
     return (<div></div>);
   }
-  const projectConfigStore = (window as any).settings
-                              .openProjectConfigFile(state.projectPath) as Store<ProjectConfigInterface>;
+  const initialProjectConfig = api
+                              .openProjectConfigFile(state.projectPath) as ProjectConfigInterface;
 
-  console.log('projectConfigStore: ',projectConfigStore);
-  const initialProjectConfig = projectConfigStore.store;
-  console.log('initialProjectConfig: ',initialProjectConfig);
+  const update = (config: CanSettingConfig) => {
+    if (config.article) {
+      const nowArticle = api.storeGet(state.projectPath,'article');
+      const update = config.article
+      const updated = {...nowArticle,...update};
+      api.storeSet(state.projectPath,{article: updated});
+    } else api.storeSet(state.projectPath,{article: null});
+
+    if (config.diary) {
+      const nowDiary = api.storeGet(state.projectPath,'diary');
+      const update = config.diary
+      const updated = {...nowDiary,...update};
+      api.storeSet(state.projectPath,{diary: updated});
+    } else api.storeSet(state.projectPath,{diary: null});
+
+    api.storeSet(state.projectPath,{tags});
+    api.storeSet(state.projectPath,{authors});
+
+  }
+
+  const nav = useNavigate();
 
   const projectName = state.projectPath.split('/')[state.projectPath.split('/').length - 1];
 
@@ -58,7 +86,7 @@ export const Settings: React.FC= () => {
   const [tagField,setTagField] = React.useState("");
   const [authorField,setAuthorField] = React.useState("");
 
-  const [allData,setAllData] = React.useState<ProjectConfigInterface>(initialProjectConfig);
+  const [data,setData] = React.useState<CanSettingConfig>(initialProjectConfig);
 
   useEffect(
     () => {
@@ -87,7 +115,7 @@ export const Settings: React.FC= () => {
       if (!tagsConstraint()) passConstraints = false;
 
       if (passConstraints) {
-        setAllData({
+        setData({
           article: useArticleState ? { folderPath: articleFolderPath, templatePath: articleTemplatePath } : null,
           authors: authors,
           diary: useDiaryState ? { folderPath: diaryFolderPath, templatePath: diaryTemplatePath } : null,
@@ -107,28 +135,26 @@ export const Settings: React.FC= () => {
       authors
     ]);
 
-  const checkFolderExistApi:(path: string)=>boolean = (window as any)
-    .settings
+  const checkFolderExistApi:(path: string)=>boolean = api
     .checkFolderExist;
-  const checkFileExistApi:(path: string)=>boolean = (window as any)
-    .settings
+  const checkFileExistApi:(path: string)=>boolean = api
     .checkFileExist;
 
 
   const openDiaryFolder = (defaultPath: string) => {
-    return (window as any).settings.getIpcRenderer().invoke('openDiaryFolder',defaultPath)
+    return api.getIpcRenderer().invoke('openDiaryFolder',defaultPath)
   };
 
   const openArticleFolder = (defaultPath: string) => {
-    return (window as any).settings.getIpcRenderer().invoke('openArticleFolder',defaultPath)
+    return api.getIpcRenderer().invoke('openArticleFolder',defaultPath)
   };
 
   const openDiaryTemplateFile = (defaultPath: string) => {
-    return (window as any).settings.getIpcRenderer().invoke('openDiaryTemplateFile',defaultPath)
+    return api.getIpcRenderer().invoke('openDiaryTemplateFile',defaultPath)
   };
 
   const openArticleTemplateFile = (defaultPath: string) => {
-    return (window as any).settings.getIpcRenderer().invoke('openArticleTemplateFile',defaultPath)
+    return api.getIpcRenderer().invoke('openArticleTemplateFile',defaultPath)
   };
 
   const isMarkdownFile = (path: string) => {
@@ -145,18 +171,18 @@ export const Settings: React.FC= () => {
   }
 
   const diaryPathConstraint = (path: string) => {
-    return checkFolderExistApi(state.projectPath+path);
+    return checkFolderExistApi(state.projectPath+'/'+path);
   }
   const articlePathConstraint = (path: string) => {
-    return checkFolderExistApi(state.projectPath+path);
+    return checkFolderExistApi(state.projectPath+'/'+path);
   }
   const diaryTemplateConstraint = (path: string) => {
     if (!isMarkdownFile(path)) return false;
-    return checkFileExistApi(state.projectPath+path);
+    return checkFileExistApi(state.projectPath+'/'+path);
   }
   const articleTemplateConstraint = (path: string) => {
     if (!isMarkdownFile(path)) return false;
-    return checkFileExistApi(state.projectPath+path);
+    return checkFileExistApi(state.projectPath+'/'+path);
   }
 
   const tagsConstraint = () => {
@@ -347,13 +373,14 @@ export const Settings: React.FC= () => {
         </Grid>
       </Grid>
       <Paper sx={{height:100}} />
-      <Bottom  OnCancelClicked={() => console.log('')}
+      <Bottom  OnCancelClicked={() => {nav('/home',{state: {projectPath: state.projectPath}})}}
                OnApplyClicked={() => {
-                 projectConfigStore.store = allData;
+                 update(data);
                }}
                OnOKClicked={() => {
-                 projectConfigStore.store = allData;
-                 console.log(projectConfigStore.store);
+                 update(data);
+                 console.log(data);
+                 nav('/home',{state: {projectPath: state.projectPath}})
                }}
                applyButtonEnable={applyButtonEnable}
                okButtonEnable={okButtonEnable}

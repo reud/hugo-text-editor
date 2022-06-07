@@ -20,7 +20,7 @@ module.exports = {
       // Windows applications and is therefore the most user friendly you can get.
       name: '@electron-forge/maker-squirrel',
       config: {
-        name: 'electron-react-typescript-webpack-2022',
+        name: 'hugo-text-writer',
       },
     },
     {
@@ -75,7 +75,7 @@ module.exports = {
               // Main Window
               // Preload
               preload: {
-                js: path.join(rootDir, 'src/renderer/preload.tsx'),
+                js: path.join(rootDir, 'src/preload.ts'),
               },
             },
           ],

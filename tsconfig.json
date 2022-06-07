@@ -23,5 +23,6 @@
       "@misc/*": ["./misc/*"],
     }
   },
-  "include": ["src/**/*", "tools/**/*"]
+  "include": ["src/**/*", "tools/**/*"],
+  "files": ["src/index.d.ts"]
 }

@@ -59,8 +59,8 @@ console.log(app.getPath('userData'));
 expressStartApp();
 
 // dialog open系はipc経由じゃないと動かない
-ipcMain.handle('folder-open', async (ev) => {
-  return openFolder();
+ipcMain.handle('openFolder', async (ev,arg) => {
+  return openFolder(arg);
 });
 // dialog open系はipc経由じゃないと動かない
 ipcMain.handle('openProject', async (ev) => {

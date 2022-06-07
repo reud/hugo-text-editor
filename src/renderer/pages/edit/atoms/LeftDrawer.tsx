@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 interface Shared {
   sharedState: WritingData,
   setSharedState: React.Dispatch<React.SetStateAction<WritingData>>
+  projectPath: string
 }
 
 export const LeftDrawer: React.FC<Shared> = (state)=> {
@@ -49,10 +50,8 @@ export const LeftDrawer: React.FC<Shared> = (state)=> {
     setSelectedCategoryState(event.target.value as string);
   };
 
-  const categories = (window as any).editor.getCategories() as string[];
-  const authors = (window as any).editor.getAuthors() as string[];
-  const templates = (window as any).editor.getTemplates() as any;
-
+  const categories = api.storeGet(state.projectPath,'categories');
+  const authors = api.storeGet(state.projectPath,'authors');
 
   useEffect(() => {
     const ds = dayjs(dateTimeState);
@@ -139,29 +138,6 @@ export const LeftDrawer: React.FC<Shared> = (state)=> {
             </Select>
             <Box pt={3}>
               <TextField fullWidth label={'Folder Place'} disabled={true} value={ sharedState.folderName }/>
-            </Box>
-            <Box pt={3}>
-              <Typography>Templates</Typography>
-              {
-                Object.entries(templates).map(([k,v]) => {
-                  return <Button key={k} onClick={() => {
-                    const ds = dayjs(dateTimeState);
-                    console.log(ds);
-                    setSharedState({
-                      author: selectedAuthorState,
-                      category: selectedCategoryState,
-                      datetime: ds.format("YYYY-MM-DDTHH:mm:00+09:00"),
-                      draft: false,
-                      folderName: sharedState.folderName,
-                      isContinue: false,
-                      path: sharedState.path,
-                      templateStr: sharedState.templateStr + `\n${v}`,
-                      title: sharedState.title
-                    })
-                  }
-                  }>{ k }</Button>
-                })
-              }
             </Box>
           </FormGroup>
         </List>
