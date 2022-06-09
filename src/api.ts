@@ -29,6 +29,8 @@ const api = {
     return ipcRenderer;
   },
   openProjectConfigFile: (projectPath: string): ProjectConfigInterface => {
+    // フォルダが存在するか
+
     return openProjectConfigFile(projectPath).store;
   },
   genRecentlyDataset: (projectPath: string):RecentDataset[] => {

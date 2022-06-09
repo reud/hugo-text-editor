@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { randomString } from '@src/util';
+import { ProjectConfigInterface } from '@src/fileio/projectConfig';
 
 export interface HomeState {
   projectPath: string;
@@ -36,8 +37,8 @@ const Home: React.FC = () => {
   const location = useLocation();
   const state = location.state as HomeState;
 
-  const projectConfigs = api.openProjectConfigFile(state.projectPath);
 
+  const projectConfigs = api.openProjectConfigFile(state.projectPath);
   const [diary,setDiary] = useState<InfoCardProps | null>(null);
   const [yesterdayDiary,setYesterdayDiary] = useState<InfoCardProps | null>(null);
   const [article,setArticle] = useState<InfoCardProps | null>(null);
@@ -48,7 +49,6 @@ const Home: React.FC = () => {
   // initiate
   useEffect(
     () => {
-      console.log('homestate: ',state);
       // diaryが有効なら
       if (projectConfigs.diary) {
         const yesterdayDiaryWritingDataSettings = replaceSpecialItems({

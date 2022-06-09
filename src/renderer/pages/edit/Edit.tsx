@@ -138,7 +138,7 @@ const Edit: React.FC = () => {
               onChange={handleShellInputChange}
               onKeyUp={(e) => {
                 if (e.key == 'Enter') {
-                  const output = api.exec(shellInputState,state.projectPath+state.writingData.path+ state.writingData.folderName);
+                  const output = api.exec(shellInputState,state.projectPath+'/'+state.writingData.path+ state.writingData.folderName);
                   setShellOutState(shellOutState+ `ｷﾀ━(ﾟ∀ﾟ)━! > ${shellInputState}\n` + `${output}\n`);
                   setShellInputState("");
                 }
