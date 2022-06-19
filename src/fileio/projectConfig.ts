@@ -11,10 +11,6 @@ import fs from 'fs';
 // <DATE8D>: 20210108
 // <TODAY_**>: returns today <**>
 // <RANDOM_STR>: 16 digits random string
-const diaryTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/diary.md','utf-8')}`;
-const articleTemplate = `${fs.readFileSync('/Users/reud/Projects/hugo-text-editor/template/article.md','utf-8')}`;
-
-
 
 export interface ProjectConfigInterface {
   diary: GenreInterface | null;
@@ -26,22 +22,16 @@ export interface ProjectConfigInterface {
 }
 
 interface GenreInterface {
-  templatePath: string;
   folderPath: string;
   title: string;
   datetime: string;
   author: string;
   category: string;
-  templateStr: string;
   folderName: string;
 }
 
 
 const articleSchema:Schema<GenreInterface> = {
-  templatePath: {
-    type: 'string',
-    default: 'template/article.md'
-  },
   folderPath: {
     type: 'string',
     default: 'content/article/'
@@ -62,10 +52,6 @@ const articleSchema:Schema<GenreInterface> = {
     type: 'string',
     default: 'article'
   },
-  templateStr: {
-    type: 'string',
-    default: articleTemplate
-  },
   folderName: {
     type: 'string',
     default: '<RANDOM_STR>'
@@ -73,10 +59,6 @@ const articleSchema:Schema<GenreInterface> = {
 }
 
 const diarySchema: Schema<GenreInterface> = {
-  templatePath: {
-    type: 'string',
-    default: 'template/article.md'
-  },
   folderPath: {
     type: 'string',
     default: 'content/diary/'
@@ -97,10 +79,6 @@ const diarySchema: Schema<GenreInterface> = {
     type: 'string',
     default: 'diary'
   },
-  templateStr: {
-    type: 'string',
-    default: diaryTemplate
-  },
   folderName: {
     type: 'string',
     default: '<TODAY_DATE8D>'
@@ -113,13 +91,11 @@ const schema: Schema<ProjectConfigInterface> = {
     type: ['object','null'],
     properties: articleSchema,
     default: {
-      templatePath: articleSchema.templatePath.default,
       folderPath: articleSchema.folderPath.default,
       title: articleSchema.title.default,
       datetime: articleSchema.datetime.default,
       author: articleSchema.author.default,
       category: articleSchema.category.default,
-      templateStr: articleSchema.templateStr.default,
       folderName: articleSchema.folderName.default,
     }
   },
@@ -127,13 +103,11 @@ const schema: Schema<ProjectConfigInterface> = {
     type: ['object','null'],
     properties: diarySchema,
     default: {
-      templatePath: diarySchema.templatePath.default,
       folderPath: diarySchema.folderPath.default,
       title: diarySchema.title.default,
       datetime: diarySchema.datetime.default,
       author: diarySchema.author.default,
       category: diarySchema.category.default,
-      templateStr: diarySchema.templateStr.default,
       folderName: diarySchema.folderName.default,
     }
   },

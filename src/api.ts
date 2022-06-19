@@ -6,6 +6,7 @@ import { FrontMatter, RecentDataset, WritingData } from '@src/structure';
 
 
 import {
+  checkAndInitializeDirectory,
   frontMatterMerge,
   frontMatterSeparate,
   readFile,
@@ -106,6 +107,14 @@ const api = {
   pullRecentlyOpenProject: ():Array<string> => {
     const store = getGlobalStore();
     return store.get('recentlyOpenProjects');
+  },
+  openDiaryTemplate: (projectPath: string) => {
+    checkAndInitializeDirectory(projectPath);
+    return readFile(projectPath+'/.hugo-text-writer/template/diary.md');
+  },
+  openArticleTemplate: (projectPath: string) => {
+    checkAndInitializeDirectory(projectPath);
+    return readFile(projectPath+'/.hugo-text-writer/template/article.md');
   }
 }
 

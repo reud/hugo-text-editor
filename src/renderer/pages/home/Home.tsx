@@ -57,7 +57,7 @@ const Home: React.FC = () => {
           datetime: projectConfigs.diary.datetime.replace('<TODAY','<YESTERDAY'),
           folderName: projectConfigs.diary.folderName.replace('<TODAY','<YESTERDAY'),
           path: projectConfigs.diary.folderPath,
-          templateStr: projectConfigs.diary.templateStr.replace('<TODAY','<YESTERDAY'),
+          contentStr: api.openDiaryTemplate(state.projectPath).replace('<TODAY','<YESTERDAY'),
           title: projectConfigs.diary.title.replace('<TODAY','<YESTERDAY')
         }) as any as WritingDataSettings;
 
@@ -67,7 +67,7 @@ const Home: React.FC = () => {
           datetime: projectConfigs.diary.datetime,
           folderName: projectConfigs.diary.folderName,
           path: projectConfigs.diary.folderPath,
-          templateStr: projectConfigs.diary.templateStr,
+          contentStr: api.openDiaryTemplate(state.projectPath),
           title: projectConfigs.diary.title
         }) as any as WritingDataSettings;
 
@@ -109,7 +109,7 @@ const Home: React.FC = () => {
           datetime: projectConfigs.article.datetime,
           folderName: projectConfigs.article.folderName,
           path: projectConfigs.article.folderPath,
-          templateStr: projectConfigs.article.templateStr,
+          templateStr: api.openArticleTemplate(state.projectPath),
           title: projectConfigs.article.title
         }) as any as WritingDataSettings;
 

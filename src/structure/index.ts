@@ -4,7 +4,7 @@ export interface WritingDataSettings {
   datetime: string;
   author: string;
   category: string;
-  templateStr: string;
+  contentStr: string;
   path: string; // ex: content/article/
   folderName: string; // ex: 20220615
 }

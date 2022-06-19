@@ -5,6 +5,7 @@ import fm from 'front-matter';
 import { FrontMatter, WritingData } from '@src/structure';
 import { dialog } from 'electron';
 import { openProjectConfigFile } from '@src/fileio/projectConfig';
+import { articleTemple, diaryTemplate } from '@src/template/template';
 
 export const setupFileGenFunction = (isContinue: boolean,folderPath: string,statement: string) => {
   if (!isContinue) {
@@ -58,7 +59,7 @@ export const readFileAndParse = (projectPath: string,projectRelativePath:string)
     datetime: attributes.date,
     author: attributes.author,
     category: attributes.categories,
-    templateStr: body,
+    contentStr: body,
     path,
     folderName: folderName,
     isContinue: true,
@@ -78,6 +79,20 @@ export const checkAndInitializeDirectory = (projectPath: string) => {
   if (!fs.statSync(projectPath + '/.hugo-text-writer').isDirectory()) {
     fs.mkdirSync(projectPath + '/.hugo-text-writer');
   }
+  // テンプレートファイルの初期化
+  // ディレクトリがあるかどうか
+  if (!fs.existsSync(projectPath + '/.hugo-text-writer/template')) {
+    fs.mkdirSync(projectPath + '/.hugo-text-writer/template');
+  }
+
+  if (!fs.existsSync(projectPath+'/.hugo-text-writer/template/article.md')) {
+    fs.writeFileSync(projectPath+'/.hugo-text-writer/template/article.md', articleTemple);
+  }
+
+  if (!fs.existsSync(projectPath+'/.hugo-text-writer/template/diary.md')) {
+    fs.writeFileSync(projectPath+'/.hugo-text-writer/template/diary.md',diaryTemplate);
+  }
+
   // 設定ファイルの初期化
   openProjectConfigFile(projectPath);
 }

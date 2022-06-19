@@ -74,8 +74,6 @@ export const Settings: React.FC= () => {
   const [useArticleState, setUseArticleState] = React.useState(!!initialProjectConfig.article);
   const [diaryFolderPath, setDiaryFolderPath] = React.useState(initialProjectConfig.diary?.folderPath || '');
   const [articleFolderPath, setArticleFolderPath] = React.useState(initialProjectConfig.article?.folderPath || '');
-  const [diaryTemplatePath, setDiaryTemplatePath] = React.useState(initialProjectConfig.diary?.templatePath || '');
-  const [articleTemplatePath, setArticleTemplatePath] = React.useState(initialProjectConfig.article?.templatePath || '');
 
   const [okButtonEnable, setOKButtonEnable] = React.useState(false);
   const [applyButtonEnable,setApplyButtonEnable] = React.useState(false);
@@ -92,10 +90,7 @@ export const Settings: React.FC= () => {
     () => {
       let passConstraints = true;
       if (useDiaryState) {
-        if(!diaryTemplateConstraint(diaryTemplatePath)) {
-          console.log('check constraint: diaryTemplateConstraint failed');
-          passConstraints = false;
-        }
+
         if(!diaryPathConstraint(diaryFolderPath)) {
           console.log('check constraint: diaryPathConstraint failed');
           passConstraints = false;
@@ -106,19 +101,16 @@ export const Settings: React.FC= () => {
           console.log('check constraint: articlePathConstraint failed');
           passConstraints = false;
         }
-        if (!articleTemplateConstraint(articleTemplatePath)) {
-          console.log('check constraint: articleTemplateConstraint failed');
-          passConstraints = false;
-        }
+
       }
       if(!authorsConstraint()) passConstraints = false;
       if (!tagsConstraint()) passConstraints = false;
 
       if (passConstraints) {
         setData({
-          article: useArticleState ? { folderPath: articleFolderPath, templatePath: articleTemplatePath } : null,
+          article: useArticleState ? { folderPath: articleFolderPath } : null,
           authors: authors,
-          diary: useDiaryState ? { folderPath: diaryFolderPath, templatePath: diaryTemplatePath } : null,
+          diary: useDiaryState ? { folderPath: diaryFolderPath } : null,
           tags: tags
         });
       }
@@ -129,8 +121,6 @@ export const Settings: React.FC= () => {
       useArticleState,
       diaryFolderPath,
       articleFolderPath,
-      diaryTemplatePath,
-      articleTemplatePath,
       tags,
       authors
     ]);
@@ -176,14 +166,6 @@ export const Settings: React.FC= () => {
   const articlePathConstraint = (path: string) => {
     return checkFolderExistApi(state.projectPath+'/'+path);
   }
-  const diaryTemplateConstraint = (path: string) => {
-    if (!isMarkdownFile(path)) return false;
-    return checkFileExistApi(state.projectPath+'/'+path);
-  }
-  const articleTemplateConstraint = (path: string) => {
-    if (!isMarkdownFile(path)) return false;
-    return checkFileExistApi(state.projectPath+'/'+path);
-  }
 
   const tagsConstraint = () => {
     return tags.length > 0;
@@ -227,19 +209,6 @@ export const Settings: React.FC= () => {
                   return path.replace(state.projectPath,'');
                 }}
                 disabled={!useDiaryState} />
-              <Grid container>
-                <FilePathInputField
-                  defaultValue={diaryTemplatePath}
-                  onValueChanged={(v) => {setDiaryTemplatePath(v);}}
-                  constraint={diaryTemplateConstraint}
-                  errorString={"File Not Found or Bad Extension (.md only)"}
-                  label={"Diary Template(ProjectRelative)"}
-                  folderIconPushed={async () => {
-                    const path = await openDiaryTemplateFile(state.projectPath);
-                    return path.replace(state.projectPath,'');
-                  }}
-                  disabled={!useDiaryState} />
-              </Grid>
             </FormGroup>
           </Paper>
         </Grid>
@@ -260,19 +229,6 @@ export const Settings: React.FC= () => {
                   label={"Article Path(ProjectRelative)"}
                   folderIconPushed={async () => {
                     const path = await openArticleFolder(state.projectPath);
-                    return path.replace(state.projectPath,'');
-                  }}
-                  disabled={!useArticleState} />
-              </Grid>
-              <Grid container>
-                <FilePathInputField
-                  defaultValue={articleTemplatePath}
-                  onValueChanged={(v) => {setArticleTemplatePath(v);}}
-                  constraint={articleTemplateConstraint}
-                  errorString={"File Not Found or Bad Extension (.md only)"}
-                  label={"Article Template(ProjectRelative)"}
-                  folderIconPushed={async () => {
-                    const path = await openArticleTemplateFile(state.projectPath);
                     return path.replace(state.projectPath,'');
                   }}
                   disabled={!useArticleState} />
