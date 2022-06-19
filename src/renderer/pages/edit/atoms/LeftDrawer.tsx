@@ -64,7 +64,7 @@ export const LeftDrawer: React.FC<Shared> = (state)=> {
       folderName: sharedState.folderName,
       isContinue: false,
       path: sharedState.path,
-      templateStr: sharedState.templateStr,
+      contentStr: sharedState.contentStr,
       title: sharedState.title
     })
   },[dateTimeState,draftState,selectedCategoryState,selectedAuthorState])

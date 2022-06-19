@@ -25,7 +25,7 @@ const Edit: React.FC = () => {
 
   const handleContentChange =(v: string) => {
     const s = sharedState;
-    s.templateStr = v;
+    s.contentStr = v;
     setSharedState(s);
   };
 
@@ -59,7 +59,7 @@ const Edit: React.FC = () => {
           draft: sharedState.draft,
         };
         // front matterが付いたmdを作成
-        const merged = api.frontMatterMerge(frontMatter,sharedState.templateStr);
+        const merged = api.frontMatterMerge(frontMatter,sharedState.contentStr);
         console.log(merged);
         // 保存
         fileGenerator.save(merged);
@@ -116,7 +116,7 @@ const Edit: React.FC = () => {
           <Box pt={3}>
             <TextField fullWidth label={'記事タイトル'}  value={titleState} onChange={handleArticleTitleChange}/>
           </Box>
-          <SimpleMdeReact options={easymdeOptions} value={sharedState.templateStr} onChange={handleContentChange} />
+          <SimpleMdeReact options={easymdeOptions} value={sharedState.contentStr} onChange={handleContentChange} />
           <Button fullWidth variant="contained" color='primary' disabled={saveLoadingState} onClick={saveWork}>Save</Button>
           <Box p={3}>
             <TextField
