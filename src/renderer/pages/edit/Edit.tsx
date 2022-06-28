@@ -78,7 +78,6 @@ const Edit: React.FC = () => {
 
   useEffect(() => {
     const cwd = `${state.projectPath+state.writingData.path+state.writingData.folderName}`;
-    api.setCwd(cwd);
 
     const serverPort = api.getFileServerPort();
     if (serverPort == -1) throw new Error('file server does not initialized');
@@ -87,6 +86,8 @@ const Edit: React.FC = () => {
     const p = `${cwd}/index.md`;
     api.pushRecentlyData(state.projectPath,p);
     saveWork();
+
+    api.setCwd(cwd);
 
     const ss = sharedState;
     ss.isContinue = true;

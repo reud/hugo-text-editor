@@ -34,7 +34,7 @@ interface GenreInterface {
 const articleSchema:Schema<GenreInterface> = {
   folderPath: {
     type: 'string',
-    default: 'content/article/'
+    default: '/content/article/'
   },
   title: {
     type: 'string',
@@ -61,7 +61,7 @@ const articleSchema:Schema<GenreInterface> = {
 const diarySchema: Schema<GenreInterface> = {
   folderPath: {
     type: 'string',
-    default: 'content/diary/'
+    default: '/content/diary/'
   },
   title: {
     type: 'string',
